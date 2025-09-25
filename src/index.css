@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minimal Portfolio Design System */
+
+@layer base {
+  :root {
+    /* Core color palette - exact specifications */
+    --portfolio-bg: 220 9% 3%; /* #0b0b0c */
+    --portfolio-surface: 225 12% 8%; /* #131316 */
+    --portfolio-text: 210 7% 91%; /* #e9e9ec */
+    --portfolio-muted: 210 7% 65%; /* #a1a1aa */
+    --portfolio-accent: 86 55% 80%; /* #b6f09c */
+    
+    /* Light mode versions (90% brightness) */
+    --portfolio-bg-light: 210 7% 95%;
+    --portfolio-surface-light: 210 7% 98%;
+    --portfolio-text-light: 220 9% 15%;
+    --portfolio-muted-light: 210 7% 45%;
+    --portfolio-accent-light: 86 45% 45%;
+
+    /* Default to dark theme */
+    --background: var(--portfolio-bg);
+    --foreground: var(--portfolio-text);
+    --card: var(--portfolio-surface);
+    --card-foreground: var(--portfolio-text);
+    --popover: var(--portfolio-surface);
+    --popover-foreground: var(--portfolio-text);
+    --primary: var(--portfolio-accent);
+    --primary-foreground: var(--portfolio-bg);
+    --secondary: var(--portfolio-surface);
+    --secondary-foreground: var(--portfolio-text);
+    --muted: var(--portfolio-surface);
+    --muted-foreground: var(--portfolio-muted);
+    --accent: var(--portfolio-accent);
+    --accent-foreground: var(--portfolio-bg);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: var(--portfolio-text);
+    --border: var(--portfolio-surface);
+    --input: var(--portfolio-surface);
+    --ring: var(--portfolio-accent);
+    --radius: 0.5rem;
+  }
+
+  .light {
+    --background: var(--portfolio-bg-light);
+    --foreground: var(--portfolio-text-light);
+    --card: var(--portfolio-surface-light);
+    --card-foreground: var(--portfolio-text-light);
+    --popover: var(--portfolio-surface-light);
+    --popover-foreground: var(--portfolio-text-light);
+    --primary: var(--portfolio-accent-light);
+    --primary-foreground: var(--portfolio-bg-light);
+    --secondary: var(--portfolio-surface-light);
+    --secondary-foreground: var(--portfolio-text-light);
+    --muted: var(--portfolio-surface-light);
+    --muted-foreground: var(--portfolio-muted-light);
+    --accent: var(--portfolio-accent-light);
+    --accent-foreground: var(--portfolio-bg-light);
+    --border: var(--portfolio-surface-light);
+    --input: var(--portfolio-surface-light);
+    --ring: var(--portfolio-accent-light);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+    font-feature-settings: "cv05", "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply leading-tight tracking-tight;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  /* Animated underline utility */
+  .underline-animate {
+    @apply bg-gradient-to-r from-current to-current bg-[length:0%_1px] bg-no-repeat bg-left-bottom transition-[background-size] duration-200 ease-out hover:bg-[length:100%_1px];
+  }
+
+  /* Dot grid background utility */
+  .dot-grid {
+    @apply pointer-events-none absolute inset-0 opacity-[0.1];
+    background: radial-gradient(circle, currentColor 1px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+
+  /* Tiny badge styling */
+  .tiny-badge {
+    @apply inline-flex items-center justify-center h-[22px] px-2 text-xs font-medium rounded-full bg-muted text-muted-foreground transition-all duration-200 grayscale hover:grayscale-0 hover:bg-accent hover:text-accent-foreground;
+  }
+
+  /* Search focus utility */
+  .search-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background;
+  }
+}
