@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { DotGridBackground } from "@/components/DotGridBackground";
 import { Header } from "@/components/Header";
@@ -6,8 +6,14 @@ import { HeroSection } from "@/components/HeroSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
+import { ChatbotWidget } from "@/components/ChatbotWidget";
 
 const Index = () => {
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  const handleOpenChatbot = () => {
+    setIsChatbotOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
@@ -17,12 +23,15 @@ const Index = () => {
       
       <main className="relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <HeroSection />
+          <HeroSection onOpenChatbot={handleOpenChatbot} />
           <ProjectsSection />
           <ContactSection />
         </div>
         <Footer />
       </main>
+      
+      {/* Chatbot Widget */}
+      <ChatbotWidget isExternalTrigger={isChatbotOpen} />
     </div>
   );
 };

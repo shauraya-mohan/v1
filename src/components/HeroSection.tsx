@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
 import itcLogo from "@/assets/itc.jpg";
 import mobifyLogo from "@/assets/mobifly.jpeg";
 import uwaterlooLogo from "@/assets/uwaterloo.png";
@@ -83,7 +85,11 @@ const TypewriterName = () => {
   );
 };
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  onOpenChatbot?: () => void;
+}
+
+export const HeroSection = ({ onOpenChatbot }: HeroSectionProps) => {
   return (
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
@@ -196,6 +202,28 @@ export const HeroSection = () => {
           AI/ML, and system optimization. Passionate about creating impactful applications 
           that solve real-world problems.
         </div>
+
+        {/* Chatbot CTA */}
+        {onOpenChatbot && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.8 }}
+            className="mt-8"
+          >
+            <Button
+              onClick={onOpenChatbot}
+              variant="outline"
+              className="group border-border/50 bg-background/50 hover:bg-accent/10 hover:border-accent/50 transition-all duration-300 font-mono"
+            >
+              <MessageCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" />
+              Ask me anything
+              <span className="ml-2 text-xs opacity-70 group-hover:opacity-100 transition-opacity">
+                →
+              </span>
+            </Button>
+          </motion.div>
+        )}
       </div>
     </motion.section>
   );
