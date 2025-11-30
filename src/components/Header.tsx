@@ -1,13 +1,7 @@
-import { useState, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { UnderlineLink } from "./UnderlineLink";
 
-interface HeaderProps {
-  onSearchFocus: () => void;
-}
-
-export const Header = ({ onSearchFocus }: HeaderProps) => {
-
+export const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

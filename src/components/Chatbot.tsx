@@ -55,7 +55,6 @@ interface ChatbotProps {
 
 export const Chatbot = ({ isOpen, onClose, onMinimize }: ChatbotProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [showWelcome, setShowWelcome] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isThinking, setIsThinking] = useState(false);

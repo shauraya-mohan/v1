@@ -1,30 +1,14 @@
+import type { Plugin } from 'vite';
+import type { IncomingMessage, ServerResponse } from 'http';
 import Replicate from 'replicate';
+import { config } from 'dotenv';
+import { resolve } from 'path';
 
-export async function POST(request: Request) {
-  try {
-    const { message, conversationHistory = [] } = await request.json();
-    
-    if (!message) {
-      return new Response(JSON.stringify({ error: 'Message is required' }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+// Load environment variables from .env.local
+config({ path: resolve(process.cwd(), '.env.local') });
 
-    if (!process.env.REPLICATE_API_TOKEN) {
-      return new Response(JSON.stringify({ error: 'API token not configured' }), { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Initialize Replicate
-    const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN,
-    });
-
-    // Comprehensive system prompt with all JSON data
-    const systemPrompt = `You are Shauraya Mohan. You are speaking in first person about yourself, your background, projects, and experience. You have access to your complete profile and can provide detailed, accurate information about yourself.
+// Comprehensive system prompt
+const systemPrompt = `You are Shauraya Mohan. You are speaking in first person about yourself, your background, projects, and experience. You have access to your complete profile and can provide detailed, accurate information about yourself.
 
 PERSONAL INFORMATION:
 - Name: Shauraya Mohan
@@ -148,32 +132,53 @@ FORMATTING EXAMPLES:
 
 Remember: You have access to the entire conversation history, so maintain context and build on previous questions. ALWAYS redirect off-topic questions to showcase your genius approach.`;
 
-    // Build conversation context
-    let conversationContext = '';
-    if (conversationHistory.length > 0) {
-      conversationContext = '\n\nPREVIOUS CONVERSATION:\n';
-      conversationHistory.forEach((msg: any, index: number) => {
-        conversationContext += `${index + 1}. User: ${msg.user}\n`;
-        conversationContext += `   Assistant: ${msg.assistant}\n`;
-      });
-    }
+async function handleChat(message: string, conversationHistory: any[] = []) {
+  const token = process.env.REPLICATE_API_TOKEN;
+  console.log('[API] Token exists:', !!token);
+  console.log('[API] Token length:', token ? token.length : 0);
+  console.log('[API] Token starts with:', token ? token.substring(0, 5) : 'N/A');
+  
+  if (!token) {
+    throw new Error('REPLICATE_API_TOKEN is not configured');
+  }
 
-    const fullPrompt = `Current user message: ${message}${conversationContext}`;
+  console.log('[API] Initializing Replicate client...');
+  const replicate = new Replicate({
+    auth: token,
+  });
 
-    // Using Google's Gemini 2.5 Flash (free, fast, and powerful)
-    const input = {
-      prompt: fullPrompt,
-      system_instruction: systemPrompt,  // Note: it's system_instruction, not system_prompt
-      temperature: 0.8,
-      top_p: 0.95,
-      max_output_tokens: 1024,
-      dynamic_thinking: false
-    };
+  let conversationContext = '';
+  if (conversationHistory.length > 0) {
+    conversationContext = '\n\nPREVIOUS CONVERSATION:\n';
+    conversationHistory.forEach((msg: any, index: number) => {
+      conversationContext += `${index + 1}. User: ${msg.user}\n`;
+      conversationContext += `   Assistant: ${msg.assistant}\n`;
+    });
+  }
 
+  const fullPrompt = `Current user message: ${message}${conversationContext}`;
+
+  // Using Google's Gemini 2.5 Flash (free, fast, and powerful)
+  const input = {
+    prompt: fullPrompt,
+    system_instruction: systemPrompt,  // Note: it's system_instruction, not system_prompt
+    temperature: 0.8,
+    top_p: 0.95,
+    max_output_tokens: 1024,
+    dynamic_thinking: false
+  };
+
+  console.log('[API] Calling Replicate API...');
+  console.log('[API] Model: google/gemini-2.5-flash');
+  
+  let fullResponse = '';
+  
+  try {
     // Use run instead of stream - get full response then simulate streaming on client
     const output = await replicate.run("google/gemini-2.5-flash", { input });
     
-    let fullResponse = '';
+    console.log('[API] Response received, type:', typeof output);
+    console.log('[API] Response is array:', Array.isArray(output));
     
     // The output is an array of strings according to the schema
     if (Array.isArray(output)) {
@@ -183,20 +188,118 @@ Remember: You have access to the entire conversation history, so maintain contex
     } else {
       fullResponse = String(output);
     }
-
-    return new Response(JSON.stringify({ response: fullResponse }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
     
-  } catch (error) {
-    console.error('Error calling Replicate API:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Failed to get response from AI',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.log('[API] Response length:', fullResponse.length);
+  } catch (error: any) {
+    console.error('[API] Replicate error:', error);
+    console.error('[API] Error message:', error?.message);
+    
+    // Check if it's an authentication error
+    if (error?.message?.includes('401') || error?.message?.includes('Unauthorized')) {
+      throw new Error('Invalid Replicate API token. Please check your REPLICATE_API_TOKEN.');
+    }
+    
+    // Check if it's a model not found error
+    if (error?.message?.includes('404') || error?.message?.includes('not found')) {
+      throw new Error('Model not found. The model "openai/gpt-4o-mini" may not be available on Replicate.');
+    }
+    
+    throw new Error(`Replicate API failed: ${error?.message || error?.toString() || 'Unknown error'}`);
   }
+
+  if (!fullResponse) {
+    throw new Error('Empty response from Replicate API');
+  }
+
+  return { response: fullResponse };
 }
+
+export function vitePluginApi(): Plugin {
+  return {
+    name: 'vite-plugin-api',
+    configureServer(server) {
+      server.middlewares.use('/api/chat', async (req: IncomingMessage, res: ServerResponse) => {
+        // Add CORS headers
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+        if (req.method === 'OPTIONS') {
+          res.writeHead(200);
+          res.end();
+          return;
+        }
+
+        if (req.method !== 'POST') {
+          res.writeHead(405, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
+        }
+
+        try {
+          // Read the request body
+          let body = '';
+          req.on('data', (chunk) => {
+            body += chunk.toString();
+          });
+
+          req.on('end', async () => {
+            try {
+              console.log('[API] Received request');
+              const { message, conversationHistory = [] } = JSON.parse(body);
+
+              if (!message) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Message is required' }));
+                return;
+              }
+
+              // Check if token is loaded
+              if (!process.env.REPLICATE_API_TOKEN) {
+                console.error('[API] REPLICATE_API_TOKEN not found in environment');
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  error: 'API token not configured',
+                  details: 'REPLICATE_API_TOKEN environment variable is missing'
+                }));
+                return;
+              }
+
+              console.log('[API] Calling Replicate API...');
+              const result = await handleChat(message, conversationHistory);
+              console.log('[API] Successfully got response');
+
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            } catch (error) {
+              console.error('[API] Error in handler:', error);
+              const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+              const errorStack = error instanceof Error ? error.stack : undefined;
+              console.error('[API] Error stack:', errorStack);
+              
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({
+                error: 'Failed to get response from AI',
+                details: errorMessage
+              }));
+            }
+          });
+
+          req.on('error', (error) => {
+            console.error('[API] Request error:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Request error' }));
+          });
+        } catch (error) {
+          console.error('[API] Error processing request:', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ 
+            error: 'Internal server error',
+            details: error instanceof Error ? error.message : 'Unknown error'
+          }));
+        }
+      });
+    },
+  };
+}
+

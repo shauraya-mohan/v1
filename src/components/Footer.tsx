@@ -16,7 +16,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer id="contact" className="py-20 border-t border-border">
+    <footer className="py-20 border-t border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
