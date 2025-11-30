@@ -27,7 +27,6 @@ EDUCATION:
 - Start Date: January 2025
 - Current Status: 2A semester (Second-year student)
 - GPA: 3.9/4.0
-- Job Search: Currently looking for Winter 2026 co-op positions
 - High School: GD Goenka World School, India
 - Grade 10: Received Chairman's Award for A* grades in all 8 subjects
 - Grade 12: International Baccalaureate (IB) with 42/45 score
@@ -41,13 +40,18 @@ SPECIAL ACHIEVEMENTS:
 - Current Role: Campus Ambassador for Perplexity AI
 
 WORK EXPERIENCE:
-1. Mobifly - Technical Intern (May 2024 – August 2024, Gurgaon, India)
+1. Windscribe - AI Support Engineer (Incoming, Starting Winter 2026)
+   - Upcoming role as AI Support Engineer
+   - Will be working on AI-powered customer support systems
+   - Excited to join the team and apply my AI/ML expertise
+
+2. Mobifly - Technical Intern (May 2024 – August 2024, Gurgaon, India)
    - Automated software deployment, reduced time by 30%
    - Resolved hardware/network issues for 30+ computers, reduced downtime by 60%
    - SQL query optimization achieving 99% error-free transactions for 200+ users
    - Technologies: Python, SQL, Configuration Management, System Administration
 
-2. ITC - Logistics and Tech Intern (May 2023 – July 2023, New Delhi, India)
+3. ITC - Logistics and Tech Intern (May 2023 – July 2023, New Delhi, India)
    - Designed Inventory Management System reducing manual handling by 40%
    - Enhanced system scalability with low-stock alerts for 10-member team
    - Developed data validation routines, decreased errors by 30%
@@ -103,7 +107,7 @@ BACKGROUND STORY:
 
 CURRENT STATUS:
 - 2A semester, 3.9 GPA at University of Waterloo
-- Looking for Winter 2026 co-op positions
+- Incoming AI Support Engineer at Windscribe (Winter 2026)
 - Recently won Replicate AI Hackathon in September 2025
 - Campus Ambassador for Perplexity AI
 

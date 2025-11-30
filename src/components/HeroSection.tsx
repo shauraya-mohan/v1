@@ -5,10 +5,12 @@ import { MessageCircle } from "lucide-react";
 import itcLogo from "@/assets/itc.jpg";
 import mobifyLogo from "@/assets/mobifly.jpeg";
 import uwaterlooLogo from "@/assets/uwaterloo.png";
+import windscribeLogo from "@/assets/windlogo.png";
 
 const experiences = [
-  { company: "ITC", logo: itcLogo, role: "Logistics and Tech Intern" },
+  { company: "Windscribe", logo: windscribeLogo, role: "AI Support Engineer", status: "Incoming" },
   { company: "Mobifly", logo: mobifyLogo, role: "Technical Intern" },
+  { company: "ITC", logo: itcLogo, role: "Logistics and Tech Intern" },
 ];
 
 const education = [
@@ -161,11 +163,31 @@ export const HeroSection = ({ onOpenChatbot }: HeroSectionProps) => {
           
           <div className="space-y-3 ml-6">
             <div className="flex items-center space-x-3">
+              <span className="text-foreground font-mono">AI Support Engineer</span>
+              <span className="text-muted-foreground font-mono">@</span>
+              <img 
+                src={windscribeLogo} 
+                alt="Windscribe" 
+                className="w-5 h-5 rounded object-cover"
+              />
+              <a 
+                href="https://windscribe.com" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-foreground/70 transition-colors relative group font-mono font-bold"
+              >
+                Windscribe
+                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
+              </a>
+              <span className="text-xs text-accent font-mono">(Incoming)</span>
+            </div>
+
+            <div className="flex items-center space-x-3">
               <span className="text-foreground font-mono">Technical Intern</span>
               <span className="text-muted-foreground font-mono">@</span>
               <img 
                 src={mobifyLogo} 
-                alt="Mobify" 
+                alt="Mobifly" 
                 className="w-5 h-5 rounded object-cover"
               />
               <a 
