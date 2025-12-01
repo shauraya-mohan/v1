@@ -53,6 +53,7 @@ export const ProjectsSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
             viewport={{ once: true }}
+            className="h-full"
           >
             <ProjectCard {...project} />
           </motion.div>
