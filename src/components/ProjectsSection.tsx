@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ProjectCard } from "./ProjectCard";
 import museSketchStudioDemo from "@/assets/demo copy.gif";
-import makhanaImage from "@/assets/makhana-preview.jpg";
+import fitVisionImage from "@/assets/image.png";
 import aiStudyBuddyImage from "@/assets/ai-study-buddy-preview.jpg";
 
 const projects = [
@@ -17,7 +17,7 @@ const projects = [
     id: 2,
     title: "FitVision",
     description: "Real-time fitness web app with pose estimation using TensorFlow.js PoseNet model. Features custom exercise tracking, human pose estimation, and user-triggered model retraining with 94% classification accuracy.",
-    image: makhanaImage,
+    image: fitVisionImage,
     tech: ["React", "TensorFlow.js", "Material-UI", "PoseNet", "Computer Vision"],
     link: "https://github.com/shauraya-mohan/FitVision"
   },
