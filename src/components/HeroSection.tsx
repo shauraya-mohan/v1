@@ -122,38 +122,6 @@ export const HeroSection = ({ onOpenChatbot }: HeroSectionProps) => {
           </div>
         </div>
 
-        {/* Current Work */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-foreground font-mono">•</span>
-            <span className="text-muted-foreground italic font-mono">currently building:</span>
-          </div>
-          
-          <div className="space-y-3 ml-6">
-            <div className="text-foreground font-mono">
-              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
-                Muse Sketch Studio
-                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <span className="text-muted-foreground ml-2 font-mono">— AI fashion design pipeline (Replicate AI Hackathon winner)</span>
-            </div>
-            <div className="text-foreground font-mono">
-              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
-                FitVision
-                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <span className="text-muted-foreground ml-2 font-mono">— real-time pose estimation with 94% accuracy</span>
-            </div>
-            <div className="text-foreground font-mono">
-              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
-                Stock Alert System
-                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <span className="text-muted-foreground ml-2 font-mono">— modular inventory monitoring with real-time alerts</span>
-            </div>
-          </div>
-        </div>
-
         {/* Experience */}
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
@@ -214,6 +182,38 @@ export const HeroSection = ({ onOpenChatbot }: HeroSectionProps) => {
                 ITC
                 <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
               </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Current Work */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <span className="text-foreground font-mono">•</span>
+            <span className="text-muted-foreground italic font-mono">currently building:</span>
+          </div>
+          
+          <div className="space-y-3 ml-6">
+            <div className="text-foreground font-mono">
+              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
+                Muse Sketch Studio
+                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
+              </a>
+              <span className="text-muted-foreground ml-2 font-mono">— AI fashion design pipeline (Replicate AI Hackathon winner)</span>
+            </div>
+            <div className="text-foreground font-mono">
+              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
+                FitVision
+                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
+              </a>
+              <span className="text-muted-foreground ml-2 font-mono">— real-time pose estimation with 94% accuracy</span>
+            </div>
+            <div className="text-foreground font-mono">
+              <a href="#projects" className="hover:text-foreground/70 transition-colors relative group font-mono font-bold">
+                Stock Alert System
+                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
+              </a>
+              <span className="text-muted-foreground ml-2 font-mono">— modular inventory monitoring with real-time alerts</span>
             </div>
           </div>
         </div>
