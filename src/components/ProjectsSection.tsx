@@ -11,7 +11,7 @@ const projects = [
     description: "AI-powered fashion design pipeline that won the Replicate AI Hackathon. Converts text prompts into professional fashion sketches, colored illustrations, model photos, and runway videos using Gemini nano-banana and veo-3 models.",
     image: museSketchStudioDemo,
     tech: ["React", "TypeScript", "Node.js", "Replicate API", "Gemini", "Veo-3"],
-    link: "https://github.com/shaurayamohan"
+    link: "https://github.com/shauraya-mohan/muse-sketch-studio"
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const projects = [
     description: "Real-time fitness web app with pose estimation using TensorFlow.js PoseNet model. Features custom exercise tracking, human pose estimation, and user-triggered model retraining with 94% classification accuracy.",
     image: makhanaImage,
     tech: ["React", "TensorFlow.js", "Material-UI", "PoseNet", "Computer Vision"],
-    link: "https://github.com/shaurayamohan"
+    link: "https://github.com/shauraya-mohan/FitVision"
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const projects = [
     description: "Modular stock alert application with real-time inventory monitoring, configurable alert thresholds, and record management. Features CRUD operations with transactional support and advanced search capabilities.",
     image: aiStudyBuddyImage,
     tech: ["Java", "SQL", "NetBeans", "Maven", "JDBC", "Swing"],
-    link: "https://github.com/shaurayamohan"
+    link: "https://github.com/shauraya-mohan"
   }
 ];
 
