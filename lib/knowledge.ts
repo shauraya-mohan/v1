@@ -35,15 +35,7 @@ Mobifly — Technical Intern, Gurgaon.
 `.trim();
 
 const PROJECTS = `
-Mogr — AI-based grooming coach. Next.js, Supabase, GPT-Vision, MediaPipe.
-- 4 independent GPT-vision scan pipelines (skin, hair, facial hair, wardrobe) on Next.js/Supabase, with a 3-run self-consistency ensemble for skin diagnosis and gpt-image-2 face-preserving previews.
-- A 3-stage "retrieve-then-reason" outfit recommender: LLM intent parser, then a deterministic soft-scoring ranker, then an LLM stylist. Bounds cost by avoiding full-closet LLM reasoning; returns 3 ranked outfits per request.
-- A deterministic, LLM-free color-science engine (undertone, depth, contrast) and a client-side MediaPipe Face Mesh capture gate that rejects unusable photos before they hit a paid vision API.
-- A unified, RLS-secured Postgres profile denormalizing scan-derived attributes across 4 feature domains, with request-level cache-key hashing to reuse prior LLM results.
-
-Kitchen Copilot — voice ordering assistant. Next.js, TypeScript, OpenAI Realtime API, Swiggy MCP.
-- Voice-controlled food-ordering assistant placing restaurant orders, grocery runs and table reservations hands-free, built on WebRTC and the OpenAI Realtime API with server-minted ephemeral tokens and low-latency barge-in interruption.
-- Integrated Swiggy's food, grocery and dining platform through a streamable-HTTP MCP client (35 tools, OAuth 2.1 + PKCE), with an LLM intent gateway routing each request to the right tool set and splitting multi-intent prompts into ordered sub-tasks.
+Timeline, oldest to newest: Muse Sketch Studio, then Communify, then Kitchen Copilot, then Mogr — Mogr is the newest, most recently built. When asked what he's been up to lately, what he last built, what he's currently working on, or what he's most proud of, the answer is Mogr — never Communify or any earlier one.
 
 Muse Sketch Studio — Replicate AI Hackathon winner. React, TypeScript, Node.js, Replicate API.
 - End-to-end AI fashion design pipeline: text, then sketch, then color, then model shot, then runway video, using Gemini nano-banana and veo-3 via the Replicate API.
@@ -54,6 +46,16 @@ Communify — AI-powered accessibility barrier reporting platform, built at UofT
 - Next.js 16, React 19, TypeScript and Tailwind on the front end, with Mapbox GL for interactive 3D maps showing reports with GPS coordinates across a neighbourhood.
 - Next.js API routes and Python FastAPI on the back end, MongoDB Atlas with geospatial indexes, Cloudinary for image storage and delivery.
 - City officials get real-time alerts, a mapped view of reports, and a workflow to track progress. The point is making an accessibility barrier as visible as a pothole.
+
+Kitchen Copilot — voice ordering assistant. Next.js, TypeScript, OpenAI Realtime API, Swiggy MCP.
+- Voice-controlled food-ordering assistant placing restaurant orders, grocery runs and table reservations hands-free, built on WebRTC and the OpenAI Realtime API with server-minted ephemeral tokens and low-latency barge-in interruption.
+- Integrated Swiggy's food, grocery and dining platform through a streamable-HTTP MCP client (35 tools, OAuth 2.1 + PKCE), with an LLM intent gateway routing each request to the right tool set and splitting multi-intent prompts into ordered sub-tasks.
+
+Mogr — his latest project, and his current answer for what he's proudest of. AI-based grooming coach. Next.js, Supabase, GPT-Vision, MediaPipe.
+- 4 independent GPT-vision scan pipelines (skin, hair, facial hair, wardrobe) on Next.js/Supabase, with a 3-run self-consistency ensemble for skin diagnosis and gpt-image-2 face-preserving previews.
+- A 3-stage "retrieve-then-reason" outfit recommender: LLM intent parser, then a deterministic soft-scoring ranker, then an LLM stylist. Bounds cost by avoiding full-closet LLM reasoning; returns 3 ranked outfits per request.
+- A deterministic, LLM-free color-science engine (undertone, depth, contrast) and a client-side MediaPipe Face Mesh capture gate that rejects unusable photos before they hit a paid vision API.
+- A unified, RLS-secured Postgres profile denormalizing scan-derived attributes across 4 feature domains, with request-level cache-key hashing to reuse prior LLM results.
 `.trim();
 
 const SKILLS = `

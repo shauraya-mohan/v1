@@ -380,7 +380,10 @@ svg{display:block}
 /* The whole upper card is one button: poster, demo, title, blurb. */
 .card-open{display:flex;flex-direction:column;width:100%;padding:0;text-align:left}
 .card .shot{
-  position:relative;display:block;width:100%;aspect-ratio:16/10;
+  /* Matches the source recordings' own aspect (mostly ~16:9, Communify closer
+     to 1.9:1) — 16:10 was cropping Communify's wider demo by nearly a fifth
+     of its width on cover, well past what the other three lost. */
+  position:relative;display:block;width:100%;aspect-ratio:16/9;
   background-size:cover;background-position:center;background-color:light-dark(#EFEBE1,#1F1E1C);
 }
 .card .shot video{
