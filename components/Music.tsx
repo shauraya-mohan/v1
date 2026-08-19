@@ -51,7 +51,7 @@ function SoundToggle({
 /** Compact widget for the sidebar. */
 export function NowPlaying() {
   const now = useNowPlaying();
-  const { muted, toggle, hasAudio } = useMusicAudio(now?.index ?? null);
+  const { muted, toggle, hasAudio } = useMusicAudio(now?.index ?? null, now?.elapsed ?? 0);
 
   return (
     <div className="np" aria-live="off">
@@ -89,7 +89,7 @@ export function NowPlaying() {
  */
 export function MusicPanel() {
   const now = useNowPlaying();
-  const { muted, toggle, hasAudio } = useMusicAudio(now?.index ?? null);
+  const { muted, toggle, hasAudio } = useMusicAudio(now?.index ?? null, now?.elapsed ?? 0);
   const pct = now ? (now.elapsed / now.track.seconds) * 100 : 0;
   const queue = now ? upNextFrom(now.index, 4) : [];
 

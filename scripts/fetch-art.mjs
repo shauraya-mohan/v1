@@ -10,12 +10,13 @@
  *
  *   npm run art
  *
- * Add a track to TRACKS, run it again — existing files are skipped, and
- * whatever's already on a line (a duration you edited, art you don't want
- * touched) is preserved rather than clobbered.
+ * Add a track to TRACKS, run it again — existing art and preview files are
+ * skipped rather than re-downloaded, but `seconds` is always re-measured off
+ * whatever preview file is on disk, so it can't drift from what actually plays.
  */
 
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -36,6 +37,20 @@ const exists = (p) =>
     () => true,
     () => false,
   );
+
+/** The preview clip is the only audio the widget ever plays, so its real
+ *  measured length — not iTunes' full-song trackTimeMillis — is what pacing
+ *  should use. macOS-only (afinfo); falls back to the iTunes number if it's
+ *  unavailable. */
+function previewDuration(file) {
+  try {
+    const out = execFileSync("afinfo", [file], { encoding: "utf8" });
+    const m = out.match(/estimated duration:\s*([\d.]+)/);
+    return m ? Math.round(Number(m[1])) : null;
+  } catch {
+    return null;
+  }
+}
 
 async function search(title, artist) {
   const term = encodeURIComponent(`${artist} ${title}`);
@@ -145,9 +160,16 @@ for (const t of tracks) {
     }
   }
 
+  // The iTunes number above is the full song; once the preview file is on
+  // disk, measure what it actually plays and trust that instead.
+  if (preview) {
+    const measured = previewDuration(previewDest);
+    if (measured) seconds = measured;
+  }
+
   // A number this can't parse back out of would break the TypeScript build,
   // so an unresolved track always gets a real placeholder, never anything else.
-  if (!Number.isFinite(seconds)) seconds = 200;
+  if (!Number.isFinite(seconds)) seconds = 30;
 
   const indent = lines[t.lineIndex].match(/^(\s*)/)[1];
   const fields = [`title: "${t.title}"`, `artist: "${t.artist}"`, `seconds: ${seconds}`];

@@ -18,31 +18,46 @@ const listeners = new Set<(m: boolean) => void>();
 function ensure(): HTMLAudioElement | null {
   if (audio || typeof window === "undefined") return audio;
   audio = new Audio();
-  audio.loop = true;
+  // No loop: the shared wall clock in useNowPlaying already paces off each
+  // track's real preview length and advances the index when it's up, so
+  // looping here would just play the same clip over under a changed label.
   audio.volume = 0.5;
   audio.muted = true;
   audio.preload = "none";
   return audio;
 }
 
-/** Point the shared element at whichever track is current. A no-op if it already is. */
-function sync(index: number) {
-  if (index === trackIndex) return;
-  trackIndex = index;
+/**
+ * Point the shared element at whichever track is current, seeked to match
+ * the wall clock's elapsed position — so unmuting mid-track picks up where
+ * the visible progress bar already says it is, not from the top. Same track,
+ * different tick: just nudge it back in line if it's drifted (a backgrounded
+ * tab throttling timers, mostly), without an audible seek on every tick.
+ */
+function sync(index: number, elapsed: number) {
   const el = ensure();
   if (!el) return;
 
-  const preview = TRACKS[index]?.preview;
-  if (!preview) {
-    el.pause();
-    el.removeAttribute("src");
+  if (index !== trackIndex) {
+    trackIndex = index;
+    const preview = TRACKS[index]?.preview;
+    if (!preview) {
+      el.pause();
+      el.removeAttribute("src");
+      return;
+    }
+    el.src = `/assets/preview/${preview}`;
+    el.currentTime = elapsed;
+    if (!el.muted) void el.play().catch(() => {});
     return;
   }
-  el.src = `/assets/preview/${preview}`;
-  if (!el.muted) void el.play().catch(() => {});
+
+  if (!el.paused && Math.abs(el.currentTime - elapsed) > 1.5) {
+    el.currentTime = elapsed;
+  }
 }
 
-export function useMusicAudio(currentIndex: number | null) {
+export function useMusicAudio(currentIndex: number | null, elapsed: number) {
   const [isMuted, setIsMuted] = useState(muted);
 
   useEffect(() => {
@@ -53,8 +68,8 @@ export function useMusicAudio(currentIndex: number | null) {
   }, []);
 
   useEffect(() => {
-    if (currentIndex !== null) sync(currentIndex);
-  }, [currentIndex]);
+    if (currentIndex !== null) sync(currentIndex, elapsed);
+  }, [currentIndex, elapsed]);
 
   // Unmuting is the user gesture browsers require before sound can play —
   // it must happen inside this click handler, not in an effect.

@@ -205,7 +205,11 @@ svg{display:block}
   border:1px solid var(--border);border-radius:4px;padding:1px 4px;
 }
 
-.rail-foot{display:flex;gap:2px;align-items:center;flex:0 0 auto;padding:0 3px}
+/* margin-top:auto pins the footer icons and profile to the bottom edge of the
+   docked desktop rail — on a tall window, the nav content stays anchored at
+   the top and this group stays flush at the bottom, so there's never a
+   dangling stretch of empty rail below the profile with nothing after it. */
+.rail-foot{display:flex;gap:2px;align-items:center;flex:0 0 auto;padding:0 3px;margin-top:auto}
 .rail-foot a,.theme-btn{
   width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
   color:var(--muted);flex:none;
@@ -844,8 +848,10 @@ svg{display:block}
 /* ---- sidebar widget */
 .np{
   flex:none;display:flex;flex-direction:column;gap:6px;
-  margin:0 3px 2px;padding:8px 10px 9px;border-radius:11px;
+  margin:0 3px 2px;padding:11px 12px 9px;border-radius:11px;
   border:1px solid var(--border-soft);background:var(--hover-bg);
+  /* Top/right padding both clear the border-radius, so the sound toggle in
+     the top-right corner never sits inside the curve's own corner cut. */
 }
 .np-label{
   display:flex;align-items:center;gap:7px;
