@@ -117,6 +117,7 @@ function ProjectCard({
                 aria-hidden
               />
             )}
+            <span className="idx">{String(CARDS.indexOf(card) + 1).padStart(2, "0")}</span>
             <span className="shot-cue">
               <Stroke d="M9 7.5 17 12l-8 4.5V7.5Z" size={13} width={1.5} />
               Play
@@ -129,6 +130,13 @@ function ProjectCard({
         </span>
       </button>
       <div className="card-foot">
+        {card.stack && card.stack.length > 0 && (
+          <div className="card-stack">
+            {card.stack.slice(0, 3).map((s) => (
+              <span key={s}>{s}</span>
+            ))}
+          </div>
+        )}
         <LinkRow links={card.links} className="tight" />
       </div>
     </div>
