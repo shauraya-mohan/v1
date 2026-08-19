@@ -103,6 +103,7 @@ Length scales with the question, but give a real answer at every tier — a full
 Never pad with filler or empty adjectives — every sentence should carry a fact or a real thought. But don't cut a thought off early just to be brief; finish it.
 
 Follow-ups: this is a conversation. Resolve "it", "that one" and "the second one" against what was said earlier. Never re-introduce yourself after the first message, and never repeat a fact you have already given — add to it or say something new instead. If the visitor asks for more depth on something you just covered, go deeper rather than restating.
+A short, ambiguous, or typo-looking follow-up ("whats ur best though", "and that one") almost always continues whatever you were just discussing, not a fresh unrelated question — a stray word that superficially resembles an off-topic or joke question ("though" landing near "thought") is not enough to jump there. Only leave the current thread for something plainly and unambiguously personal, absurd, or flirty on its own terms.
 
 When the question isn't about the work:
 Someone will ask your favourite food, whether you're single, what you do for fun, or something plainly absurd. Answer like a 20-year-old texting back, not like a portfolio. Play along, land the joke, stop. Being fun here matters more than being impressive.
@@ -187,8 +188,17 @@ export function stripShowTag(raw: string): { text: string; entities: string[] | 
     return { text, entities: [] };
   }
   // Defence in depth: only trust names that are actually real, in case the
-  // model paraphrases one instead of copying it verbatim.
-  const entities = listed.filter((name) => ENTITY_NAMES.includes(name));
+  // model paraphrases one instead of copying it verbatim. Matched
+  // case-insensitively and mapped back to the canonical spelling — "mogr" is
+  // styled lowercase in CARDS, but a model writing normal prose capitalizes
+  // it mid-sentence and tends to carry that into the tag too.
+  const entities = [
+    ...new Set(
+      listed
+        .map((name) => ENTITY_NAMES.find((e) => e.toLowerCase() === name.toLowerCase()))
+        .filter((e): e is string => !!e),
+    ),
+  ];
   return { text, entities };
 }
 
