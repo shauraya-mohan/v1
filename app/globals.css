@@ -1,0 +1,924 @@
+/* ---------------------------------------------------------------- tokens */
+:root{
+  color-scheme:dark;
+
+  --accent:#D97757;
+
+  --bg:            light-dark(#F7F4ED,#242321);
+  --fg:            light-dark(#26231F,#F5F2EA);
+  --body:          light-dark(#3C382F,#DCD7CD);
+  --nav-fg:        light-dark(#4A453E,#C7C1B7);
+  --muted:         light-dark(#8F897F,#7C766D);
+  --muted-2:       light-dark(#6F6A61,#9A948A);
+  --label:         light-dark(#8F897F,#6E6860);
+
+  --rail-bg:       light-dark(#F0ECE3,#1C1B19);
+  --rail-border:   light-dark(#E3DED2,#302E2B);
+  --rail-divider:  light-dark(#E3DED2,#2A2724);
+
+  --surface:       light-dark(#FFFFFF,#2F2E2B);
+  --surface-card:  light-dark(#FFFFFF,#2A2826);
+  --border:        light-dark(#E3DED2,#3A3835);
+  --border-soft:   light-dark(#E3DED2,#302E2B);
+  --border-strong: light-dark(#D3CCBD,#4A4640);
+  --divider:       light-dark(#EFEBE1,#322E2A);
+  --dashed:        light-dark(#D9D3C6,#3F3B36);
+  --danger:        light-dark(#A63D2B,#E8877A);
+  --field:         light-dark(#FFFFFF,#232220);
+
+  --hover-bg:      light-dark(#E7E2D7,#232220);
+  --seg-bg:        light-dark(#F4F1E9,#232220);
+  --seg-border:    light-dark(#E7E2D7,#3A3835);
+  --chip-bg:       light-dark(#FBF9F4,#2A2927);
+  --tab-shell:     light-dark(#E7E2D7,#232220);
+
+  --avatar-bg:     light-dark(#E4D2C4,#3A342C);
+  --avatar-fg:     light-dark(#9A4B2A,#E8B48A);
+
+  --rule:          light-dark(#E3DED2,#332F2B);
+  --sweep-dim:     light-dark(#C9C2B4,#57534C);
+  --sweep-dim-2:   light-dark(#BDB6A8,#6E6860);
+
+  --serif:var(--font-serif),Newsreader,Georgia,serif;
+  --sans:var(--font-sans),'Schibsted Grotesk',system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+/* ---------------------------------------------------------------- reset */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg)}
+body{
+  color:var(--fg);
+  font:400 14px/1.55 var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--fg);text-decoration:none}
+a:hover{color:var(--accent)}
+input{font:inherit;color:inherit;background:none;border:0;outline:none;width:100%}
+input::placeholder{color:var(--muted)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+svg{display:block}
+::selection{background:var(--accent);color:light-dark(#FFF,#242321)}
+/* No visible scrollbars. The gradient hand-off and bottom-pinning carry the
+   affordance instead, and the rail is short enough not to need one. */
+*{scrollbar-width:none}
+::-webkit-scrollbar{width:0;height:0;display:none}
+
+/* ---------------------------------------------------------------- motion */
+@keyframes breathe{0%,100%{opacity:.5;transform:scale(.86)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes sweep{0%{background-position:-220% 0}100%{background-position:220% 0}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes soft{from{opacity:0}to{opacity:1}}
+@keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes grow{from{width:0}to{width:100%}}
+@keyframes bootout{0%{opacity:1}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.06)}}
+@keyframes markin{0%{opacity:0;transform:scale(.4) rotate(-90deg)}100%{opacity:1;transform:none}}
+@keyframes petal{0%,100%{transform:rotate(0deg) scale(1)}50%{transform:rotate(45deg) scale(.93)}}
+@keyframes glyphroll{to{transform:translateY(-100%)}}
+
+.petal{animation:petal 1.15s ease-in-out infinite;transform-origin:center}
+
+/* rolling ✻ glyph spinner */
+.gs{
+  display:inline-block;overflow:hidden;flex:none;text-align:center;
+  font-family:var(--mono);line-height:1;color:var(--accent);
+}
+.gs>span{display:block;animation:glyphroll 1.26s steps(12) infinite}
+.gs i{display:block;font-style:normal;line-height:1}
+.gs-sm{width:15px;height:16px;font-size:16px}
+.gs-lg{width:21px;height:22px;font-size:22px}
+
+/* shimmering text */
+.sweep{
+  background:linear-gradient(100deg,var(--sweep-dim) 22%,var(--fg) 48%,var(--sweep-dim) 74%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:sweep 2.1s ease-in-out infinite;
+}
+.sweep-sm{
+  background:linear-gradient(100deg,var(--sweep-dim-2) 22%,var(--fg) 48%,var(--sweep-dim-2) 74%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:sweep 1.5s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------- boot */
+.boot{
+  position:fixed;inset:0;z-index:60;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  animation:bootout 2.5s ease forwards;
+}
+.boot[hidden]{display:none}
+.boot-mark{width:68px;height:68px;display:grid;place-items:center;animation:markin .6s cubic-bezier(.2,.8,.3,1) both}
+.boot-verb{
+  font:400 13px/1 var(--mono);letter-spacing:.02em;color:var(--muted);
+  display:flex;align-items:center;gap:9px;margin:-10px 0 0;
+}
+.boot-name{font:200 34px/1 var(--serif);letter-spacing:.01em}
+.boot-name{
+  background:linear-gradient(100deg,var(--sweep-dim) 22%,var(--fg) 48%,var(--sweep-dim) 74%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:sweep 2.1s ease-in-out infinite;
+}
+.boot-rule{width:140px;height:1px;background:var(--rule);overflow:hidden}
+.boot-rule>div{height:100%;background:var(--accent);animation:grow 2.2s cubic-bezier(.35,.7,.3,1) forwards}
+
+/* ---------------------------------------------------------------- shell */
+.shell{height:100dvh;display:flex;overflow:hidden;position:relative}
+
+/* ---------------------------------------------------------------- rail */
+.rail{
+  width:258px;flex:none;background:var(--rail-bg);
+  border-right:1px solid var(--rail-border);
+  display:flex;flex-direction:column;padding:12px 10px 9px;gap:10px;
+  overflow:hidden;position:relative;z-index:40;
+  /* No scrolling here, ever — the layout is kept compact enough to fit instead
+     (the now-playing widget hides itself under 820px of height; see below). A
+     sidebar that scrolls independently of the chat is also how a wheel/touch
+     gesture over the chat could ever visually read as moving the rail too: if
+     there's nothing to scroll, there's nothing for a stray event to move. */
+}
+.rail-head{display:flex;align-items:center;gap:8px;padding:0 6px;flex:none}
+.rail-wordmark{font:400 18px/1 var(--serif)}
+.rail-head-actions{margin-left:auto;display:flex;gap:11px;color:var(--muted)}
+.rail-head-actions button{display:grid;place-items:center}
+.rail-head-actions button:hover{color:var(--fg)}
+
+.tabs{
+  display:flex;background:var(--tab-shell);border:1px solid var(--border-soft);
+  border-radius:9px;padding:3px;flex:none;
+}
+.tabs button{
+  flex:1;text-align:center;padding:5px 0;border-radius:6px;font-size:12.5px;
+  color:var(--muted-2);transition:background .18s,color .18s;
+}
+.tabs button.on{background:var(--surface);color:var(--fg)}
+
+.touch{
+  display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);font-size:13.5px;flex:none;
+  transition:transform .15s,border-color .15s;
+}
+.touch:hover{border-color:var(--accent)}
+.touch:active{transform:scale(.985)}
+
+.nav{display:flex;flex-direction:column;gap:1px;flex:none}
+.nav button{
+  flex:none;display:flex;align-items:center;gap:10px;padding:6px 11px;border-radius:8px;
+  color:var(--nav-fg);font-size:13.5px;background:transparent;
+  transition:background .15s,color .15s;
+}
+.nav button:hover{color:var(--fg)}
+.nav button.on{background:var(--hover-bg)}
+.nav svg{opacity:.7;flex:none}
+
+.group{display:flex;flex-direction:column;gap:2px;flex:none}
+.group-label{
+  padding:2px 11px 4px;font-size:10.5px;letter-spacing:.07em;
+  color:var(--label);text-transform:uppercase;flex:none;
+}
+.pin{
+  flex:none;display:flex;align-items:baseline;gap:9px;padding:5px 11px;border-radius:8px;
+  color:var(--nav-fg);font-size:13px;
+}
+.pin:hover{background:var(--hover-bg)}
+.pin .dot{width:5px;height:5px;border-radius:5px;background:var(--accent);flex:none}
+.pin .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin .year{margin-left:auto;font-size:11px;color:var(--label);flex:none}
+
+.recent button{
+  flex:none;padding:5px 11px;border-radius:8px;color:var(--muted-2);font-size:13px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.recent button:hover{background:var(--hover-bg);color:var(--fg)}
+
+
+.rail-resume{
+  display:flex;align-items:center;gap:10px;padding:7px 11px;border-radius:8px;
+  color:var(--nav-fg);font-size:13.5px;flex:none;
+}
+.rail-resume:hover{background:var(--hover-bg);color:var(--fg)}
+.rail-resume svg{opacity:.7;flex:none}
+.rail-resume .ext{
+  margin-left:auto;font-size:9.5px;letter-spacing:.08em;color:var(--label);
+  border:1px solid var(--border);border-radius:4px;padding:1px 4px;
+}
+
+.rail-foot{display:flex;gap:2px;align-items:center;flex:0 0 auto;padding:0 3px}
+.rail-foot a,.theme-btn{
+  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+  color:var(--muted);flex:none;
+}
+.rail-foot a:hover,.theme-btn:hover{background:var(--hover-bg);color:var(--fg)}
+.theme-btn{margin-left:auto}
+
+.who{
+  display:flex;align-items:center;gap:10px;padding:8px 8px 2px;
+  border-top:1px solid var(--rail-divider);flex:none;
+}
+.who .avatar{
+  width:28px;height:28px;border-radius:28px;background:var(--avatar-bg);color:var(--avatar-fg);
+  display:grid;place-items:center;font-size:11px;flex:none;
+}
+.who .meta{min-width:0}
+.who .meta .n{font-size:13px}
+.who .meta .s{font-size:11.5px;color:var(--muted)}
+.who .meta .n,.who .meta .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------------------------------------------------------------- main */
+.main{
+  flex:1;min-width:0;overflow:auto;display:flex;flex-direction:column;align-items:center;
+  padding:0 28px;position:relative;scroll-behavior:smooth;
+}
+.hamburger{
+  position:absolute;top:14px;left:14px;z-index:30;width:32px;height:32px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface);display:none;place-items:center;
+  color:var(--muted-2);
+}
+.scrim{display:none}
+
+/* ---------------------------------------------------------------- home */
+.home{
+  width:100%;max-width:700px;margin:auto;padding:56px 0;
+  display:flex;flex-direction:column;gap:24px;
+}
+.home-head{
+  display:flex;align-items:center;gap:15px;
+  animation:rise .6s .04s both cubic-bezier(.2,.75,.3,1);
+}
+.home-head svg{flex:none;animation:markin .7s .05s both cubic-bezier(.2,.8,.3,1)}
+.home-head h1{margin:0;font:200 46px/1.08 var(--serif);letter-spacing:-.012em}
+
+.composer{
+  background:var(--surface);border:1px solid var(--border);border-radius:17px;
+  padding:15px 16px 11px;display:flex;flex-direction:column;gap:18px;
+  animation:rise .6s .15s both cubic-bezier(.2,.75,.3,1);transition:border-color .2s;
+}
+.composer:hover{border-color:var(--border-strong)}
+.composer input{font-size:15.5px;padding:3px 2px}
+.composer-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+
+.icon-btn{
+  width:27px;height:27px;border-radius:27px;border:1px solid var(--border);
+  display:grid;place-items:center;color:var(--muted-2);flex:none;
+  transition:color .15s,border-color .15s;
+}
+.icon-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+.seg{
+  display:flex;background:var(--seg-bg);border:1px solid var(--seg-border);
+  border-radius:9px;padding:2px;flex:none;
+}
+.seg button{padding:3px 12px;border-radius:7px;font-size:12.5px;color:var(--nav-fg)}
+.seg button:hover{background:var(--surface)}
+
+.composer-right{margin-left:auto;display:flex;align-items:center;gap:11px}
+.badge{
+  font-size:12px;color:var(--muted);border:1px solid var(--seg-border);
+  border-radius:99px;padding:3px 11px;white-space:nowrap;
+}
+.send{
+  width:28px;height:28px;border-radius:28px;background:var(--accent);color:#FFF;
+  display:grid;place-items:center;flex:none;transition:transform .15s,opacity .15s;
+}
+.send:hover{opacity:.88}
+.send:active{transform:scale(.92)}
+
+.chips{
+  display:flex;gap:9px;flex-wrap:wrap;
+  animation:rise .6s .26s both cubic-bezier(.2,.75,.3,1);
+}
+.chips button{
+  display:flex;align-items:center;gap:8px;padding:7px 15px;border:1px solid var(--border);
+  border-radius:99px;font-size:13px;color:var(--nav-fg);background:var(--chip-bg);
+  transition:transform .15s,border-color .15s,color .15s;
+}
+.chips button:hover{border-color:var(--accent);color:var(--fg);transform:translateY(-1px)}
+.chips button:active{transform:translateY(0) scale(.98)}
+
+/* ---------------------------------------------------------------- thread */
+/* Transcript column plus the follow-up bar pinned to the bottom of the scroller. */
+/* In conversation the composer is pinned and the transcript scrolls behind it,
+   so nothing ends up trapped under the dock. */
+.main-chat{overflow:hidden}
+.conversation{
+  width:100%;max-width:700px;margin:0 auto;
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+.thread-scroll{flex:1;min-height:0;width:100%;overflow-y:auto;overscroll-behavior:contain;overflow-anchor:none}
+
+.thread{
+  width:100%;padding:34px 0 18px;
+  display:flex;flex-direction:column;gap:20px;animation:soft .3s both;
+}
+
+/* One question and its answer. Spacing separates exchanges, not a rule. */
+.exchange{display:flex;flex-direction:column;gap:20px}
+.exchange + .exchange{margin-top:18px}
+
+/* Cards and rows arrive after the answer has finished typing. */
+.attachments{display:flex;flex-direction:column;gap:19px;animation:rise .42s cubic-bezier(.2,.75,.3,1) both}
+
+.follow-dock{
+  position:relative;flex:none;width:100%;
+  padding:13px 0 max(15px,env(safe-area-inset-bottom));background:var(--bg);
+}
+/* Soft hand-off where the transcript meets the composer. */
+.follow-dock::before{
+  content:"";position:absolute;left:0;right:0;bottom:100%;height:26px;
+  background:linear-gradient(to top,var(--bg),transparent);pointer-events:none;
+}
+.composer-thread{padding:11px 13px 9px;border-radius:14px;gap:12px}
+.composer-thread input{font-size:14.5px}
+
+.send:disabled{cursor:default;opacity:.65}
+.send:disabled:hover{opacity:.65}
+/* Quiet spinner in the send button while an answer is in flight. */
+.send-wait{
+  width:13px;height:13px;border-radius:13px;
+  border:1.6px solid rgb(255 255 255 / .4);border-top-color:#FFF;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.back{
+  font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;align-self:flex-start;
+}
+.back:hover{color:var(--fg)}
+
+.bubble{
+  align-self:flex-end;max-width:78%;background:var(--surface);border:1px solid var(--border);
+  border-radius:15px;padding:9px 15px;font-size:14.5px;animation:drop .35s both;
+}
+
+.thinking{display:flex;align-items:center;gap:11px;padding:2px 0;animation:soft .25s both}
+.thinking span:last-child{font-size:14.5px}
+.mark-think{flex:none;animation:petal 1.5s ease-in-out infinite;transform-origin:center}
+
+.answer{animation:soft .35s both}
+.answer-body{min-width:0;display:flex;flex-direction:column;gap:19px}
+.prose{display:flex;flex-direction:column;gap:12px}
+.prose p{
+  margin:0;font-size:15px;line-height:1.68;color:var(--body);
+  text-wrap:pretty;animation:rise .5s both;
+}
+
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+/* One result is the answer, so let it fill the column and show the demo big. */
+.cards[data-count="1"]{grid-template-columns:minmax(0,1fr)}
+.card{
+  border:1px solid var(--border);border-radius:13px;background:var(--surface-card);
+  overflow:hidden;display:flex;flex-direction:column;animation:rise .5s both;
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 28px -14px rgb(0 0 0 / .3)}
+
+/* The whole upper card is one button: poster, demo, title, blurb. */
+.card-open{display:flex;flex-direction:column;width:100%;padding:0;text-align:left}
+.card .shot{
+  position:relative;display:block;width:100%;aspect-ratio:16/10;
+  background-size:cover;background-position:center;background-color:light-dark(#EFEBE1,#1F1E1C);
+}
+.card .shot video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .32s ease;
+}
+/* Cross-fade the demo over its own poster frame. */
+.card:hover .shot video{opacity:1}
+
+.shot-cue{
+  position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:5px;
+  padding:3px 8px 3px 6px;border-radius:99px;font-size:11px;letter-spacing:.01em;
+  color:#F5F2EA;background:rgb(20 18 16 / .58);backdrop-filter:blur(6px);
+  opacity:.85;transition:opacity .2s,transform .2s;
+}
+.card:hover .shot-cue{opacity:0;transform:translateY(3px)}
+
+.card-body{padding:12px 14px 10px;display:flex;flex-direction:column;gap:7px;flex:1}
+.card-title{font:400 18px/1.15 var(--serif)}
+.card-blurb{font-size:12.8px;line-height:1.55;color:var(--muted-2);text-wrap:pretty}
+.card-foot{padding:0 14px 12px}
+
+.rows{
+  display:flex;flex-direction:column;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;background:var(--surface-card);
+}
+.row{display:flex;gap:13px;padding:13px 15px;border-bottom:1px solid var(--divider);animation:rise .5s both}
+.row:last-child{border-bottom:0}
+/* No chip behind the mark — the logos carry their own shape. The rounding only
+   matters for the two that ship with a baked-in background. */
+.row .logo{
+  width:29px;height:29px;flex:none;border-radius:7px;
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+}
+/* ITC and Waterloo are black line art on transparent, so they vanish on the
+   dark surface. Invert rather than shipping a second copy of each. */
+[data-theme="dark"] .row .logo-mono{filter:invert(1);opacity:.92}
+.row .rbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.row .rhead{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+.row .rname{font-size:14.5px}
+.row .rrole{font-size:12.5px;color:var(--muted-2)}
+.row .rmeta{margin-left:auto;font-size:11.5px;color:var(--label);white-space:nowrap}
+.row .rline{font-size:12.8px;line-height:1.55;color:var(--muted-2);text-wrap:pretty}
+
+.note{
+  border:1px dashed var(--dashed);border-radius:13px;padding:20px;text-align:center;
+  font-size:13px;color:var(--muted);animation:rise .5s .1s both;
+}
+
+.follow{display:flex;gap:8px;flex-wrap:wrap}
+.follow button{
+  padding:6px 14px;border:1px solid var(--border);border-radius:99px;font-size:12.5px;
+  color:var(--nav-fg);background:var(--chip-bg);transition:border-color .15s,color .15s;
+}
+.follow button:hover{border-color:var(--accent);color:var(--fg)}
+
+/* ------------------------------------------------- links, streaming, error */
+
+/* Outbound affordance: label + a small kicked arrow that nudges on hover. */
+.linkrow{display:flex;gap:7px;flex-wrap:wrap}
+.linkrow.tight{margin-top:2px}
+.linkrow a{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border:1px solid var(--border);border-radius:99px;background:var(--chip-bg);
+  font-size:12px;color:var(--nav-fg);white-space:nowrap;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.linkrow a:hover{border-color:var(--accent);color:var(--fg)}
+.linkrow a svg{opacity:.55;transition:transform .15s,opacity .15s}
+.linkrow a:hover svg{opacity:1;transform:translate(1px,-1px)}
+
+.inline-link{color:var(--fg);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:2px}
+.inline-link:hover{color:var(--accent)}
+
+.rname a{display:inline-flex;align-items:center;gap:4px}
+.rname a svg{opacity:0;transition:opacity .15s,transform .15s}
+.row:hover .rname a svg{opacity:.5}
+.rname a:hover svg{opacity:1;transform:translate(1px,-1px)}
+
+/* Blinking terracotta block while the model is still writing. */
+.caret{
+  display:inline-block;width:.45em;height:1em;margin-left:2px;vertical-align:-.13em;
+  background:var(--accent);border-radius:1px;animation:blink 1s steps(2) infinite;
+}
+@keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+
+.oops{display:flex;flex-direction:column;gap:12px}
+.oops p{margin:0;font-size:15px;line-height:1.68;color:var(--body)}
+
+/* ---------------------------------------------------------------- narrow */
+/* Tablet and below: the rail becomes an overlay drawer. */
+@media (max-width:859px){
+  /* An overlay drawer doesn't need to span the full screen height the way the
+     docked desktop rail does — that forced full-height stretch is exactly what
+     left dead space below the profile block, with nothing to visually explain
+     it. Sized to its own content instead, capped so an unusually short device
+     still clips rather than scrolls. */
+  .rail{
+    position:absolute;top:0;left:0;bottom:auto;height:fit-content;max-height:100dvh;
+    width:min(84vw,278px);border-radius:0 14px 14px 0;
+    padding-left:max(10px,env(safe-area-inset-left));
+    padding-bottom:max(9px,env(safe-area-inset-bottom));
+    transform:translateX(-100%);transition:transform .22s cubic-bezier(.2,.8,.3,1);
+    box-shadow:0 20px 50px -12px rgb(0 0 0 / .35);
+  }
+  body.rail-open .rail{transform:none}
+  body.rail-open{overflow:hidden}
+  .hamburger{display:grid}
+  body.rail-open .scrim{
+    display:block;position:absolute;inset:0;z-index:35;
+    background:rgb(0 0 0 / .3);animation:soft .2s both;
+  }
+
+  .main{padding:0 20px;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+  .home{padding:76px 0 48px}
+  .home-head h1{font-size:38px}
+  .thread{padding:64px 0 8px}
+}
+
+/* Phone: tighten the composer, drop to one column, keep taps ≥40px. */
+@media (max-width:559px){
+  .main{padding:0 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+  .home{padding:70px 0 40px;gap:20px}
+  .exchange{gap:16px}
+  .exchange + .exchange{margin-top:14px}
+  .follow-dock{padding:10px 0 max(12px,env(safe-area-inset-bottom))}
+  .composer-thread input{font-size:16px}
+  .home-head{gap:12px}
+  .home-head h1{font-size:clamp(27px,8.4vw,34px);letter-spacing:-.015em}
+  .home-head svg{width:31px;height:31px}
+
+  .composer{padding:13px 13px 10px;border-radius:15px;gap:14px}
+  /* 16px keeps iOS from zooming the viewport when the field takes focus. */
+  .composer input{font-size:16px}
+  .composer-bar{gap:8px}
+  .badge{display:none}
+  .icon-btn,.send{width:34px;height:34px;border-radius:34px}
+  .seg button{padding:6px 13px}
+
+  .chips{gap:7px}
+  .chips button{padding:8px 14px}
+
+  .thread{padding:58px 0 8px;gap:16px}
+  .bubble{max-width:90%;font-size:14px}
+  .answer-body{gap:16px}
+  .prose p{font-size:14.5px}
+
+  .cards{grid-template-columns:1fr;gap:11px}
+  .row{padding:12px 13px;gap:11px}
+  .rmeta{margin-left:0;flex-basis:100%}
+
+  .hamburger{width:38px;height:38px}
+  .nav button,.pin,.recent button,.rail-resume{padding-top:9px;padding-bottom:9px}
+  .rail-foot a,.theme-btn{width:34px;height:34px}
+  .linkrow a{padding:6px 11px}
+}
+
+/* Short landscape phones: the boot screen needs to breathe less. */
+@media (max-height:520px){
+  .boot{gap:18px}
+  .boot-name{font-size:26px}
+  .boot-mark svg{width:52px;height:52px}
+}
+
+/* Coarse pointers never get hover, so don't reserve motion for it. */
+@media (hover:none){
+  .card:hover,.chips button:hover{transform:none}
+  .rname a svg{opacity:.5}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+
+/* ------------------------------------------------- project detail sheet */
+.sheet-backdrop{
+  position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;
+  background:light-dark(rgb(58 52 44 / .34),rgb(10 9 8 / .62));
+  backdrop-filter:blur(7px);animation:soft .18s both;
+}
+.sheet{
+  width:min(880px,100%);max-height:min(88dvh,860px);overflow:auto;
+  background:var(--surface-card);border:1px solid var(--border);border-radius:19px;
+  box-shadow:0 40px 90px -30px rgb(0 0 0 / .5);position:relative;
+  animation:sheetin .3s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes sheetin{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.sheet:focus{outline:none}
+
+.sheet-close{
+  position:absolute;top:12px;right:12px;z-index:2;width:32px;height:32px;border-radius:32px;
+  display:grid;place-items:center;color:#F5F2EA;background:rgb(20 18 16 / .5);
+  backdrop-filter:blur(6px);transition:background .15s,transform .15s;
+}
+.sheet-close:hover{background:rgb(20 18 16 / .78);transform:scale(1.06)}
+
+.sheet-stage{
+  position:relative;background:#141210;border-bottom:1px solid var(--border);
+  border-radius:18px 18px 0 0;overflow:hidden;line-height:0;
+}
+/* Keep the demo generous but never so tall that the links fall below the fold. */
+.sheet-stage video,.sheet-stage img{width:100%;max-height:min(42dvh,400px);object-fit:contain;display:block}
+
+/* Our own transport bar, in place of the browser's native video chrome —
+   same dark scrim + blur language as .sheet-close, terracotta for progress. */
+.vplayer{
+  position:absolute;left:0;right:0;bottom:0;z-index:1;
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  background:linear-gradient(to top,rgb(10 9 8 / .82),rgb(10 9 8 / 0));
+  opacity:0;transform:translateY(3px);
+  transition:opacity .18s,transform .18s;
+}
+.sheet-stage:hover .vplayer,.sheet-stage:focus-within .vplayer{opacity:1;transform:none}
+/* Touch has no hover — keep the transport reachable without one. */
+@media (hover:none){.vplayer{opacity:1;transform:none}}
+
+.vplayer-btn{
+  flex:none;width:26px;height:26px;border-radius:26px;display:grid;place-items:center;
+  color:#F5F2EA;transition:background .15s,color .15s;
+}
+.vplayer-btn:hover{background:rgb(245 242 234 / .14)}
+.vplayer-btn[aria-pressed="true"]{color:var(--accent)}
+
+.vplayer-time{
+  flex:none;font:400 10.5px/1 var(--mono);color:rgb(245 242 234 / .78);
+  font-variant-numeric:tabular-nums;letter-spacing:.01em;
+}
+
+/* A native range input, restyled to look like the thin terracotta progress
+   line used everywhere else on the site (.np-bar) rather than a browser slider. */
+.vplayer-seek{
+  -webkit-appearance:none;appearance:none;flex:1;height:3px;min-width:0;border-radius:3px;
+  background-color:rgb(245 242 234 / .22);
+  background-image:linear-gradient(var(--accent),var(--accent));
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+.vplayer-seek::-webkit-slider-thumb{
+  -webkit-appearance:none;width:10px;height:10px;margin-top:-3.5px;border-radius:10px;
+  background:var(--accent);box-shadow:0 0 0 3px rgb(217 119 87 / .28);
+  opacity:0;transition:opacity .15s;
+}
+.vplayer-seek::-moz-range-thumb{
+  width:10px;height:10px;border:0;border-radius:10px;background:var(--accent);
+  box-shadow:0 0 0 3px rgb(217 119 87 / .28);opacity:0;transition:opacity .15s;
+}
+.vplayer-seek::-moz-range-track{height:3px;border-radius:3px;background:transparent}
+.vplayer:hover .vplayer-seek::-webkit-slider-thumb,.vplayer-seek:focus-visible::-webkit-slider-thumb{opacity:1}
+.vplayer:hover .vplayer-seek::-moz-range-thumb,.vplayer-seek:focus-visible::-moz-range-thumb{opacity:1}
+
+.sheet-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:13px}
+.sheet-body h2{margin:0;font:300 30px/1.1 var(--serif);letter-spacing:-.01em}
+.sheet-lede{margin:0;font-size:14.5px;line-height:1.6;color:var(--fg)}
+.sheet-detail{margin:0;font-size:14px;line-height:1.72;color:var(--muted-2);text-wrap:pretty}
+
+/* Stack reads as data, so it gets the mono face. */
+.stack{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.stack li{
+  font:400 10.5px/1 var(--mono);letter-spacing:.03em;text-transform:uppercase;
+  color:var(--label);border:1px solid var(--border);border-radius:5px;padding:5px 7px;
+}
+
+.sheet-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px}
+.sheet-links a{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--chip-bg);font-size:13px;color:var(--nav-fg);
+  transition:border-color .15s,color .15s,transform .15s;
+}
+.sheet-links a:hover{border-color:var(--accent);color:var(--fg);transform:translateY(-1px)}
+.sheet-links a .kick{opacity:.45;transition:transform .15s,opacity .15s}
+.sheet-links a:hover .kick{opacity:1;transform:translate(1px,-1px)}
+
+.linkrow a .kick{opacity:.5}
+
+@media (max-width:559px){
+  .sheet-backdrop{padding:0;place-items:end stretch}
+  .sheet{
+    max-height:94dvh;border-radius:17px 17px 0 0;border-bottom:0;
+    animation:sheetup .28s cubic-bezier(.2,.8,.3,1) both;
+  }
+  @keyframes sheetup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  .sheet-stage{border-radius:16px 16px 0 0}
+  .sheet-stage video,.sheet-stage img{max-height:34dvh}
+  .sheet-body{padding:18px 17px calc(20px + env(safe-area-inset-bottom))}
+  .sheet-body h2{font-size:25px}
+}
+
+/* Without hover there is no preview, so keep the play cue visible. */
+@media (hover:none){
+  .card:hover .shot-cue{opacity:.85;transform:none}
+  .card:hover .shot video{opacity:0}
+}
+
+/* ------------------------------------------------- collapsible sidebar */
+@media (min-width:860px){
+  .rail{transition:width .24s cubic-bezier(.2,.8,.3,1),opacity .18s,padding .24s}
+  body.rail-hidden .rail{
+    width:0;padding-left:0;padding-right:0;border-right-width:0;
+    opacity:0;visibility:hidden;
+  }
+  body.rail-hidden .hamburger{display:grid}
+  /* Give the transcript room to breathe once the rail is out of the way. */
+  body.rail-hidden .main{padding-left:64px}
+}
+
+/* ------------------------------------------------- reach-out form */
+.write-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:15px 17px;border:1px solid var(--border);border-radius:13px;
+  background:var(--chip-bg);
+}
+.write-cta p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted-2);max-width:34ch}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:7px;flex:none;
+  padding:9px 17px;border-radius:10px;background:var(--accent);color:#FFF;
+  font-size:13.5px;transition:transform .15s,opacity .15s;
+}
+.btn-primary:hover{opacity:.9}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary:disabled{opacity:.6;cursor:default;transform:none}
+.btn-primary svg{opacity:.85}
+
+.sheet-form{width:min(620px,100%)}
+.form-head{
+  position:relative;padding:22px 24px 17px;border-bottom:1px solid var(--border);
+}
+.eyebrow{
+  display:block;font:400 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;
+}
+.form-head h2{margin:0;font:300 27px/1.1 var(--serif);letter-spacing:-.01em}
+.form-close{
+  position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:30px;
+  display:grid;place-items:center;color:var(--muted);transition:background .15s,color .15s;
+}
+.form-close:hover{background:var(--hover-bg);color:var(--fg)}
+
+.form-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:17px}
+.field{display:flex;flex-direction:column;gap:7px;border:0;padding:0;margin:0;min-width:0}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.label{
+  font:400 10.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--label);padding:0;
+}
+.label em{font-style:normal;text-transform:none;letter-spacing:.02em;opacity:.72}
+
+/* Filled, rounded fields — our vocabulary, not the underline look. */
+.form-body input,.form-body textarea{
+  width:100%;padding:10px 12px;border-radius:10px;background:var(--field);
+  border:1px solid var(--border);color:var(--fg);font:400 14px/1.5 var(--sans);
+  outline:none;transition:border-color .16s,box-shadow .16s;resize:vertical;
+}
+.form-body textarea{min-height:96px}
+.form-body input:focus,.form-body textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px light-dark(rgb(217 119 87 / .14),rgb(217 119 87 / .2));
+}
+.form-body input::placeholder,.form-body textarea::placeholder{color:var(--muted)}
+.err{font-size:11.5px;color:var(--danger)}
+
+.pickers{display:flex;flex-wrap:wrap;gap:7px}
+.picker{
+  padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--chip-bg);
+  font-size:12.5px;color:var(--nav-fg);transition:border-color .15s,color .15s,background .15s;
+}
+.picker:hover{border-color:var(--border-strong)}
+.picker.on{
+  border-color:var(--accent);color:var(--fg);
+  background:light-dark(rgb(217 119 87 / .1),rgb(217 119 87 / .16));
+}
+
+/* Honeypot: out of view, out of the tab order, still fillable by bots. */
+.decoy{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
+.form-failed{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 14px;border:1px solid var(--danger);border-radius:11px;
+  background:light-dark(rgb(166 61 43 / .07),rgb(232 135 122 / .1));
+}
+.form-failed p{margin:0;font-size:13px;color:var(--fg)}
+.form-failed a{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--fg);text-decoration:underline;text-decoration-color:var(--danger);text-underline-offset:2px}
+
+.form-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-top:3px;
+}
+.form-foot>span{font-size:12px;color:var(--muted)}
+
+.form-done{padding:32px 26px 30px;display:flex;flex-direction:column;align-items:flex-start;gap:13px}
+.form-done .tick{
+  width:42px;height:42px;border-radius:42px;display:grid;place-items:center;
+  color:var(--accent);border:1px solid var(--accent);
+  background:light-dark(rgb(217 119 87 / .1),rgb(217 119 87 / .14));
+  animation:markin .45s cubic-bezier(.2,.8,.3,1) both;
+}
+.form-done h3{margin:0;font:300 24px/1.15 var(--serif)}
+.form-done p{margin:0;font-size:14px;line-height:1.65;color:var(--muted-2);max-width:44ch}
+.form-done .btn-primary{margin-top:5px}
+
+@media (max-width:559px){
+  .field-row{grid-template-columns:1fr;gap:15px}
+  .form-head{padding:18px 17px 15px}
+  .form-head h2{font-size:23px}
+  .form-close{top:15px;right:14px}
+  .form-body{padding:17px 17px calc(20px + env(safe-area-inset-bottom))}
+  /* 16px stops iOS zooming the viewport on focus. */
+  .form-body input,.form-body textarea{font-size:16px}
+  .form-done{padding:26px 18px calc(24px + env(safe-area-inset-bottom))}
+  .form-foot{flex-direction:column;align-items:stretch}
+  .form-foot .btn-primary{justify-content:center;padding:12px 17px}
+  .write-cta{flex-direction:column;align-items:stretch}
+  .write-cta .btn-primary{justify-content:center}
+}
+
+/* ------------------------------------------------- listening */
+@keyframes eq{0%,100%{transform:scaleY(.28)}50%{transform:scaleY(1)}}
+
+.bars{display:inline-flex;align-items:flex-end;gap:1.5px;height:9px;flex:none}
+.bars i{
+  width:2px;height:100%;background:var(--accent);border-radius:1px;
+  transform-origin:bottom;animation:eq .9s ease-in-out infinite;
+}
+.bars i:nth-child(1){animation-delay:-.5s}
+.bars i:nth-child(2){animation-delay:-.2s;height:70%}
+.bars i:nth-child(3){animation-delay:-.7s}
+.bars i:nth-child(4){animation-delay:-.35s;height:80%}
+.bars i:nth-child(5){animation-delay:-.05s;height:60%}
+/* Nothing loaded yet, so hold the bars still rather than animating a lie. */
+.bars.paused i{animation-play-state:paused;transform:scaleY(.4);opacity:.5}
+
+/* Progress line, shared by the rail widget and the panel. */
+.np-bar{
+  flex:1;height:2px;border-radius:2px;background:var(--rule);overflow:hidden;min-width:0;
+}
+.np-bar>span{display:block;height:100%;background:var(--accent);transition:width .9s linear}
+.np-time{font:400 10.5px/1 var(--mono);color:var(--label);flex:none;font-variant-numeric:tabular-nums}
+
+/* ---- sidebar widget */
+.np{
+  flex:none;display:flex;flex-direction:column;gap:6px;
+  margin:0 3px 2px;padding:8px 10px 9px;border-radius:11px;
+  border:1px solid var(--border-soft);background:var(--hover-bg);
+}
+.np-label{
+  display:flex;align-items:center;gap:7px;
+  font:400 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--label);
+}
+.np-row{display:flex;align-items:center;gap:9px;min-width:0}
+.np-art{
+  width:30px;height:30px;border-radius:6px;flex:none;
+  background:var(--rule) center/cover no-repeat;
+  box-shadow:0 2px 8px -3px rgb(0 0 0 / .4);
+}
+.np-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.np-title,.np-artist{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.np-title{font-size:12.5px;color:var(--fg)}
+.np-artist{font-size:11px;color:var(--muted)}
+.np-foot{display:flex;align-items:center;gap:9px}
+
+/* ---- in-conversation panel */
+.music{display:flex;flex-direction:column;gap:16px}
+.music-now{
+  display:flex;gap:16px;padding:15px;border-radius:14px;
+  border:1px solid var(--border);background:var(--surface-card);
+}
+.music-now-art{
+  width:104px;height:104px;flex:none;border-radius:9px;
+  background:var(--rule) center/cover no-repeat;
+  box-shadow:0 8px 22px -10px rgb(0 0 0 / .5);
+}
+.music-now-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;justify-content:center}
+.music-eyebrow{
+  display:flex;align-items:center;gap:7px;
+  font:400 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--label);
+}
+.music-now-meta h3{margin:2px 0 0;font:400 21px/1.15 var(--serif);overflow-wrap:anywhere}
+.music-now-meta p{margin:0;font-size:13px;color:var(--muted-2)}
+.music-progress{display:flex;align-items:center;gap:10px;margin-top:7px}
+
+/* Sound toggle: quiet by default, present but out of the way when it's just
+   the mute icon; a touch more visible once the visitor has turned it on. */
+.sound-toggle{
+  margin-left:auto;width:22px;height:22px;border-radius:22px;flex:none;
+  display:grid;place-items:center;color:var(--muted);
+  transition:color .15s,background .15s;
+}
+.sound-toggle:hover:not(:disabled){background:var(--hover-bg);color:var(--fg)}
+.sound-toggle[aria-pressed="true"]{color:var(--accent)}
+.sound-toggle:disabled{opacity:.35;cursor:default}
+.sound-toggle-sm{width:18px;height:18px}
+.np-label{position:relative}
+
+/* Up next: text only, on purpose — this is a queue, not a second gallery. */
+.queue{display:flex;flex-direction:column}
+.queue-label{
+  padding:0 0 9px;font:400 9.5px/1 var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--label);
+}
+.queue-row{
+  display:flex;align-items:center;gap:12px;padding:10px 2px;
+  border-top:1px solid var(--divider);
+}
+.queue-index{
+  width:16px;flex:none;font:400 11px/1 var(--mono);color:var(--label);
+  text-align:right;font-variant-numeric:tabular-nums;
+}
+.queue-meta{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px}
+.queue-title{font-size:13.5px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.queue-artist{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.queue-time{
+  flex:none;font:400 11px/1 var(--mono);color:var(--label);font-variant-numeric:tabular-nums;
+}
+
+@media (max-width:559px){
+  .queue-artist{max-width:34vw}
+  .music-now-art{width:78px;height:78px}
+  .music-now-meta h3{font-size:18px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .bars i{animation:none;transform:scaleY(.55)}
+  .np-bar>span{transition:none}
+}
+
+@media (max-height:820px){
+  .np{display:none}
+}
+
+/* The overlay drawer is already a lot of stacked content on a narrower screen,
+   and the now-playing widget is the one thing here that isn't identity,
+   navigation, or a way to reach out — it steps aside so the drawer always fits
+   without clipping or scrolling, on any phone height. Nothing is lost: the
+   same info is one tap away via the Listening nav item. */
+@media (max-width:859px){
+  .np{display:none}
+}
+
+/* Smaller phones (iPhone SE-class and similar) still don't have room for
+   everything even with the widget gone. Recent is the next thing to give —
+   the same four projects are one tap away via the Projects nav item above,
+   so nothing is actually lost, and this is enough to fit without clipping. */
+@media (max-width:859px) and (max-height:760px){
+  .recent{display:none}
+}
