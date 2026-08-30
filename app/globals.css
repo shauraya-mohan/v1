@@ -502,19 +502,21 @@ svg{display:block}
 /* ---------------------------------------------------------------- narrow */
 /* Tablet and below: the rail becomes an overlay drawer. */
 @media (max-width:859px){
-  /* An overlay drawer doesn't need to span the full screen height the way the
-     docked desktop rail does — that forced full-height stretch is exactly what
-     left dead space below the profile block, with nothing to visually explain
-     it. Sized to its own content instead, capped so an unusually short device
-     still clips rather than scrolls. */
+  /* Full height, edge to edge, like any drawer — shrinking it to fit-content
+     used to leave a floating card with a slab of bare scrim underneath, which
+     read as broken rather than intentional. The footer/profile block's
+     margin-top:auto is what used to open a gap above it on a tall drawer, so
+     that's neutralised below and the content just stacks from the top instead
+     — any leftover space at the bottom is the rail's own background, not scrim. */
   .rail{
-    position:absolute;top:0;left:0;bottom:auto;height:fit-content;max-height:100dvh;
+    position:absolute;top:0;left:0;bottom:0;height:auto;max-height:none;
     width:min(84vw,278px);border-radius:0 14px 14px 0;
     padding-left:max(10px,env(safe-area-inset-left));
     padding-bottom:max(9px,env(safe-area-inset-bottom));
     transform:translateX(-100%);transition:transform .22s cubic-bezier(.2,.8,.3,1);
     box-shadow:0 20px 50px -12px rgb(0 0 0 / .35);
   }
+  .rail-foot{margin-top:0}
   body.rail-open .rail{transform:none}
   body.rail-open{overflow:hidden}
   .hamburger{display:grid}

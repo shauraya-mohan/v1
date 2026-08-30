@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Boot } from "@/components/Boot";
 import { Composer } from "@/components/Composer";
+import { FaviconSpinner } from "@/components/FaviconSpinner";
 import { Home } from "@/components/Home";
 import { Rail } from "@/components/Rail";
 import { Thread } from "@/components/Thread";
@@ -176,6 +177,7 @@ export default function Page() {
 
   return (
     <>
+      <FaviconSpinner active={pending} />
       {booting && <Boot verb={verb} ms={BOOT_MS} />}
 
       <div className="shell">
