@@ -74,6 +74,18 @@ export type Row = {
 
 export const CARDS: Card[] = [
   {
+    title: "Aftershock",
+    img: "/assets/aftershock-poster.jpg",
+    blurb:
+      "Push a commit, get back a pull request that fixes it. Six agents drive real browsers at your preview and only file what they can reproduce. Built at Hack the North 2026.",
+    aliases: ["hack the north"],
+    demo: "/assets/aftershock-demo.mp4",
+    detail:
+      "No test suite, no selectors, nobody writes a spec. A push fires a webhook, Scout turns what the commit claims into assertions before any browser opens, and two independent oracles go after it: a conformance agent drives the preview deployment against each assertion, while a differential pair replays the same recorded actions against main and diffs the accessibility trees — so a regression the diff never mentioned is caught by construction rather than by judgement. Planning happens exactly once and the base side replays it verbatim, otherwise a difference between them could just be model variance. A critic then tries to kill every finding, and what survives gets diagnosed, patched, redeployed and replayed against the journey that originally failed — the PR opens verified only if that replay goes green. On the live run it caught every cart line rendering $NaN on a route the commit never touched, which typecheck, lint and CI had all passed, and shipped the one-line fix in 180 seconds.",
+    stack: ["Next.js 15", "Browserbase", "Stagehand", "OpenAI", "TypeScript", "Vercel"],
+    links: [{ label: "Code", href: "https://github.com/CalvinDobbs/aftershock", kind: "code" }],
+  },
+  {
     title: "mogr",
     img: "/assets/mogr-poster.jpg",
     blurb:
@@ -112,21 +124,6 @@ export const CARDS: Card[] = [
       "An end-to-end fashion design pipeline that starts at a text prompt and ends at a runway video: text, then sketch, then colour, then model shot, then motion. Gemini nano-banana handles the image stages and veo-3 the video, both through the Replicate API. It won the Replicate AI Hackathon.",
     stack: ["React", "TypeScript", "Node.js", "Replicate", "veo-3"],
     links: [{ label: "Live", href: "https://muse-sketch-studio.vercel.app/#/design", kind: "live" }],
-  },
-  {
-    title: "Communify",
-    img: "/assets/communify-poster.jpg",
-    blurb:
-      "Photograph a broken curb ramp, get it triaged and mapped. Gemini sorts barriers into 19 types with severity and a cost estimate. Built at UofTHacks 13.",
-    demo: "/assets/communify-demo.mp4",
-    sound: true,
-    detail:
-      "Citizens photograph an accessibility barrier — a broken sidewalk, a missing curb ramp, a blocked path — and Gemini 2.0 Flash reads the image, sorts it into one of 19 barrier types, judges severity, estimates the repair cost and routes it to the right municipal team. Reports land on a Mapbox GL map with GPS coordinates so officials can see a neighbourhood at a glance, with real-time alerts and a workflow to track each fix. The point is making an accessibility barrier as visible as a pothole.",
-    stack: ["Next.js 16", "FastAPI", "Gemini 2.0 Flash", "LangGraph", "MongoDB", "Mapbox GL"],
-    links: [
-      { label: "Devpost", href: "https://devpost.com/software/communify-65i0w7", kind: "devpost" },
-      { label: "Code", href: "https://github.com/shauraya-mohan/uofthacks-13", kind: "code" },
-    ],
   },
 ];
 
@@ -282,14 +279,15 @@ type Signal = { strong: RegExp[]; weak: RegExp[] };
 const SIGNALS: Record<Topic, Signal> = {
   projects: {
     strong: [
-      /\bmogr\b/, /kitchen copilot/, /muse ?sketch/, /communify/, /\bswiggy\b/,
-      /uoft ?hacks/, /mediapipe/, /langgraph/, /\bmapbox\b/, /nano.?banana/,
+      /\bmogr\b/, /kitchen copilot/, /muse ?sketch/, /after ?shock/, /\bswiggy\b/,
+      /hack ?the ?north/, /browserbase/, /stagehand/, /mediapipe/, /nano.?banana/,
       /gpt-?image/, /face mesh/,
     ],
     weak: [
       /\bprojects?\b/, /\bbuilt\b/, /\bbuild\b/, /\bship(ped|ping)?\b/, /\bside project/,
       /\bhackathon\b/, /grooming/, /\boutfit\b/, /recommender/, /\bmcp\b/, /webrtc/,
       /realtime api/, /\bveo\b/, /accessibility/, /\bdemo\b/, /\brepo\b/, /github/,
+      /differential/, /regression/, /pull request/, /\bdiff\b/, /preview deploy/,
     ],
   },
   experience: {

@@ -44,10 +44,13 @@ fabricated Google role gets *"I don't share my instructions. I have no record of
 
 **Demos.** Every project card holds a silent looping demo that plays on hover and fills the detail
 view when you click through. `preload="none"`, so nothing downloads until the pointer lands, and it
-rewinds on the way out. Sources came from the `v1` repo; the 53MB Muse Sketch GIF was transcoded to
-H.264 and the rest re-encoded at CRF 31 — 92MB of source became 12MB shipped. mogr's poster is its
-end card, the others open on their hero frame. `prefers-reduced-motion` skips hover playback, and on
-touch there is no hover so the play cue stays put and tapping opens the sheet.
+rewinds on the way out. Everything is re-encoded to 960px wide at CRF 31 with the audio dropped —
+four demos ship in 8.8MB. Aftershock's 22MB 1080p export lost its 28-second title sequence too, so
+hovering lands in the product rather than on a logo. Its poster is the before-and-after replay —
+`$NaN` on the left, `$84.00` on the right — because a dashboard screenshot turns to mush at card
+width and that frame still reads. mogr's is its end card; the other two open on their hero frame.
+`prefers-reduced-motion` skips hover playback, and on touch there is no hover so the play cue stays
+put and tapping opens the sheet.
 
 **Detail sheet** (`components/ProjectModal.tsx`) — demo, longer write-up, stack, and every link with
 its own icon. Closes on Escape, backdrop, or the X; restores focus to the card and locks page scroll
@@ -76,8 +79,8 @@ environments* is enabled in the dashboard; until then the route replies 409 and 
 directly with the public key, which is public by design. If a send fails, the draft is handed to the
 visitor's mail client prefilled so nothing typed is lost.
 
-**Sidebar.** Project and role entries ask a real question — clicking Communify sends "Tell me about
-Communify", clicking a role sends "What did you do at Control D?" — so they land as model answers
+**Sidebar.** Project and role entries ask a real question — clicking Aftershock sends "Tell me about
+Aftershock", clicking a role sends "What did you do at Control D?" — so they land as model answers
 with the right card attached, not a generic overview. Pinned roles derive from `ROWS` so the two
 can't drift. The rail collapses on desktop (persisted in `localStorage`) and becomes a drawer under
 860px; the same control does both.

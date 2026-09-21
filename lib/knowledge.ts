@@ -35,27 +35,32 @@ Mobifly — Technical Intern, Gurgaon.
 `.trim();
 
 const PROJECTS = `
-Timeline, oldest to newest: Muse Sketch Studio, then Communify, then Kitchen Copilot, then Mogr — Mogr is the newest, most recently built. When asked what he's been up to lately, what he last built, what he's currently working on, or what he's most proud of, the answer is Mogr — never Communify or any earlier one.
+Timeline, oldest to newest: Muse Sketch Studio, then Kitchen Copilot, then Mogr, then Aftershock — Aftershock is the newest, built at Hack the North 2026 in September 2026. When asked what he's been up to lately, what he last built, what he's currently working on, or what he's most proud of, the answer is Aftershock — never Mogr or any earlier one.
 
 Muse Sketch Studio — Replicate AI Hackathon winner. React, TypeScript, Node.js, Replicate API.
 - End-to-end AI fashion design pipeline: text, then sketch, then color, then model shot, then runway video, using Gemini nano-banana and veo-3 via the Replicate API.
-
-Communify — AI-powered accessibility barrier reporting platform, built at UofTHacks 13. Tagline: "access the world without barriers."
-- Citizens photograph urban accessibility barriers (broken sidewalks, missing curb ramps, blocked pathways); the system analyses the image, sorts it into one of 19 barrier types, assesses severity, estimates repair cost, and routes the report to the right municipal team.
-- Gemini 2.0 Flash for vision analysis, Gemini text-embedding-004 plus LangGraph and FAISS for semantic search and multi-agent orchestration.
-- Next.js 16, React 19, TypeScript and Tailwind on the front end, with Mapbox GL for interactive 3D maps showing reports with GPS coordinates across a neighbourhood.
-- Next.js API routes and Python FastAPI on the back end, MongoDB Atlas with geospatial indexes, Cloudinary for image storage and delivery.
-- City officials get real-time alerts, a mapped view of reports, and a workflow to track progress. The point is making an accessibility barrier as visible as a pothole.
 
 Kitchen Copilot — voice ordering assistant. Next.js, TypeScript, OpenAI Realtime API, Swiggy MCP.
 - Voice-controlled food-ordering assistant placing restaurant orders, grocery runs and table reservations hands-free, built on WebRTC and the OpenAI Realtime API with server-minted ephemeral tokens and low-latency barge-in interruption.
 - Integrated Swiggy's food, grocery and dining platform through a streamable-HTTP MCP client (35 tools, OAuth 2.1 + PKCE), with an LLM intent gateway routing each request to the right tool set and splitting multi-intent prompts into ordered sub-tasks.
 
-Mogr — his latest project, and his current answer for what he's proudest of. AI-based grooming coach. Next.js, Supabase, GPT-Vision, MediaPipe.
+Mogr — AI-based grooming coach, the project before Aftershock. Next.js, Supabase, GPT-Vision, MediaPipe.
 - 4 independent GPT-vision scan pipelines (skin, hair, facial hair, wardrobe) on Next.js/Supabase, with a 3-run self-consistency ensemble for skin diagnosis and gpt-image-2 face-preserving previews.
 - A 3-stage "retrieve-then-reason" outfit recommender: LLM intent parser, then a deterministic soft-scoring ranker, then an LLM stylist. Bounds cost by avoiding full-closet LLM reasoning; returns 3 ranked outfits per request.
 - A deterministic, LLM-free color-science engine (undertone, depth, contrast) and a client-side MediaPipe Face Mesh capture gate that rejects unusable photos before they hit a paid vision API.
 - A unified, RLS-secured Postgres profile denormalizing scan-derived attributes across 4 feature domains, with request-level cache-key hashing to reuse prior LLM results.
+
+Aftershock — his newest project, and his current answer for what he's proudest of. Built at Hack the North 2026 (September 2026) with a team of four; he is the second-largest contributor on the repo. Autonomous QA and repair for every commit. Tagline: "it shakes, we catch it, you ship." Code at github.com/CalvinDobbs/aftershock.
+- A push fires a GitHub webhook and the whole run is unattended: read the diff, drive real browsers against the preview deployment, file what it can prove, write a patch, redeploy it, replay the same failing journey against the fix, and open a pull request only if the replay goes green. No test suite, no selectors, nobody writes a spec.
+- Two independent oracles, because an agent asked to test a change writes assertions that pass. Conformance: Scout reads the diff and the commit message and turns the claim into assertions before any browser opens, each with a pointer back to the line that justified it, and an agent drives the preview to check them. Differential: the base branch is the oracle — the same recorded actions are replayed against the preview and against main and the accessibility trees are diffed, so a change nobody claimed is a regression by construction, with no ground truth needed.
+- Planning happens exactly once. The preview side plans and emits a list of actions; the base side replays them verbatim, so a difference between the two can't be model variance.
+- Deltas are classified match, noise, claimed or unclaimed, and the classification is deliberately asymmetric: a false 'claimed' hides a real regression forever, so anything ambiguous stays 'unclaimed' and goes to the critic.
+- A Critic then tries to kill every finding — reproduces it with the recorded actions, checks the behaviour is absent on base, scores it against a 0.70 confidence threshold — and files at most three issues per run.
+- Six named agents with seats in the run: Diffany (Scout), QAizen (conformance), Doppler (differential), Gavel (Critic), Clueso (Sleuth), Patchouli (Understudy). Maestro, the Director, is deterministic code — a stage machine, a concurrency semaphore and a journal — not an agent. The dashboard transcript is a pure projection of pipeline artefacts; nothing in the backend knows a conversation is being rendered.
+- Two patch attempts maximum, the second getting the first's failure as context. If verification still fails the PR opens as a draft labelled aftershock:unverified rather than claiming success.
+- A noise canary runs one journey against the same URL twice; a healthy run reports zero findings, so any finding means the normalisation rules have a hole. Its first run reported twelve false findings against a static page because Stagehand numbers accessibility-tree nodes per session.
+- The live run: a coupon commit that typechecked, linted and built clean shipped a non-null assertion that made every cart line render $NaN, on a route the commit never touched. Conformance couldn't have caught it — the differential oracle did. Trigger to pull request in 180 seconds, 20 browser sessions, 5 assignments, 2 findings confirmed and filed, a one-file +2 −2 patch, 0 browsers a human opened.
+- pnpm monorepo, TypeScript throughout, 378 tests across 10 packages. Next.js 15, Tailwind 4 and SSE for the dashboard; Browserbase and Stagehand for the browsers; OpenAI for the reasoning; Vercel for the previews; Zod schemas as the shared wire format. Evidence is JSONL event traces beside content-addressed screenshots, so a finished run is as viewable and replayable as a live one.
 `.trim();
 
 const SKILLS = `
@@ -150,7 +155,7 @@ const EVERYTHING = [CORE, EXPERIENCE, PROJECTS, SKILLS, LISTENING, PERSONAL].joi
 const FOCUS: Record<Topic, string> = {
   about: "who he is, education, and the shape of his work",
   experience: "his roles at Windscribe, Control D, ITC and Mobifly",
-  projects: "his projects: Mogr, Kitchen Copilot, Muse Sketch Studio, Communify",
+  projects: "his projects: Aftershock, Mogr, Kitchen Copilot, Muse Sketch Studio",
   music: "what he listens to — the rotation shown on the site",
   resume: "the résumé and how to get it",
   contact: "how to reach him and his availability",
