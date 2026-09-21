@@ -45,10 +45,13 @@ fabricated Google role gets *"I don't share my instructions. I have no record of
 **Demos.** Every project card holds a silent looping demo that plays on hover and fills the detail
 view when you click through. `preload="none"`, so nothing downloads until the pointer lands, and it
 rewinds on the way out. Everything is re-encoded to 960px wide at CRF 31 with the audio dropped —
-four demos ship in 8.8MB. Aftershock's 22MB 1080p export lost its 28-second title sequence too, so
-hovering lands in the product rather than on a logo. Its poster is the before-and-after replay —
-`$NaN` on the left, `$84.00` on the right — because a dashboard screenshot turns to mush at card
-width and that frame still reads. mogr's is its end card; the other two open on their hero frame.
+four demos ship in 8.4MB. Aftershock's 22MB 1080p export also runs at `setpts=0.5*PTS`, which takes
+3m18s down to 1m39s without cutting anything: trimming the title sequence would have opened the
+hover in the product, but the slates are part of the pitch, so speed does the same job for the
+runtime without throwing frames away. Its poster is the "Meet the six" slide rather than a video
+frame — every dashboard still turns to mush at card width, and big type over six coloured nodes is
+the one thing that survives the downscale. mogr's poster is its end card; the other two open on
+their hero frame.
 `prefers-reduced-motion` skips hover playback, and on touch there is no hover so the play cue stays
 put and tapping opens the sheet.
 

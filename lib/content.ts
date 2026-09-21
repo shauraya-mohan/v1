@@ -74,18 +74,6 @@ export type Row = {
 
 export const CARDS: Card[] = [
   {
-    title: "Aftershock",
-    img: "/assets/aftershock-poster.jpg",
-    blurb:
-      "Push a commit, get back a pull request that fixes it. Six agents drive real browsers at your preview and only file what they can reproduce. Built at Hack the North 2026.",
-    aliases: ["hack the north"],
-    demo: "/assets/aftershock-demo.mp4",
-    detail:
-      "No test suite, no selectors, nobody writes a spec. A push fires a webhook, Scout turns what the commit claims into assertions before any browser opens, and two independent oracles go after it: a conformance agent drives the preview deployment against each assertion, while a differential pair replays the same recorded actions against main and diffs the accessibility trees — so a regression the diff never mentioned is caught by construction rather than by judgement. Planning happens exactly once and the base side replays it verbatim, otherwise a difference between them could just be model variance. A critic then tries to kill every finding, and what survives gets diagnosed, patched, redeployed and replayed against the journey that originally failed — the PR opens verified only if that replay goes green. On the live run it caught every cart line rendering $NaN on a route the commit never touched, which typecheck, lint and CI had all passed, and shipped the one-line fix in 180 seconds.",
-    stack: ["Next.js 15", "Browserbase", "Stagehand", "OpenAI", "TypeScript", "Vercel"],
-    links: [{ label: "Code", href: "https://github.com/CalvinDobbs/aftershock", kind: "code" }],
-  },
-  {
     title: "mogr",
     img: "/assets/mogr-poster.jpg",
     blurb:
@@ -100,6 +88,18 @@ export const CARDS: Card[] = [
       { label: "Demo", href: "https://youtu.be/-Xymq5G8VXE", kind: "demo" },
       { label: "Code", href: "https://github.com/shauraya-mohan/mogr", kind: "code" },
     ],
+  },
+  {
+    title: "Aftershock",
+    img: "/assets/aftershock-poster.jpg",
+    blurb:
+      "Push a commit, get back a pull request that fixes it. Six agents drive real browsers at your preview and only file what they can reproduce. Built at Hack the North 2026.",
+    aliases: ["hack the north"],
+    demo: "/assets/aftershock-demo.mp4",
+    detail:
+      "No test suite, no selectors, nobody writes a spec. A push fires a webhook, Scout turns what the commit claims into assertions before any browser opens, and two independent oracles go after it: a conformance agent drives the preview deployment against each assertion, while a differential pair replays the same recorded actions against main and diffs the accessibility trees — so a regression the diff never mentioned is caught by construction rather than by judgement. Planning happens exactly once and the base side replays it verbatim, otherwise a difference between them could just be model variance. A critic then tries to kill every finding, and what survives gets diagnosed, patched, redeployed and replayed against the journey that originally failed — the PR opens verified only if that replay goes green. On the live run it caught every cart line rendering $NaN on a route the commit never touched, which typecheck, lint and CI had all passed, and shipped the one-line fix in 180 seconds.",
+    stack: ["Next.js 15", "Browserbase", "Stagehand", "OpenAI", "TypeScript", "Vercel"],
+    links: [{ label: "Code", href: "https://github.com/CalvinDobbs/aftershock", kind: "code" }],
   },
   {
     title: "Kitchen Copilot",

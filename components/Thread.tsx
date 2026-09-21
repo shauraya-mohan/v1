@@ -346,17 +346,26 @@ export function Thread({
     const answer = ANSWERS[turn.topic];
     if (turn.kind === "curated") return { cards: answer.cards, rows: answer.rows };
 
+    const context = `${turn.question} ${turn.text}`;
+
     // The model's own [[SHOW: ...]] tag says exactly what it gave real detail
     // about — trust that over guessing from the prose. Text-matching is only
     // a fallback for the rare case the tag didn't parse.
+    //
+    // The tag is still a judgement call at temperature, so it gets one
+    // deterministic check: something the exchange never actually names can't
+    // have been detailed in it. Hack the North is hosted at the University of
+    // Waterloo, and the model tags the school on Aftershock answers that never
+    // mention it — that association is permanent, so a prompt rule alone
+    // wouldn't hold. Intersecting can only ever remove a name, never invent
+    // one, so the tag stays in charge of what counts as real detail.
     if (turn.entities !== null) {
       const named = new Set(turn.entities);
       return {
-        cards: CARDS.filter((c) => named.has(c.title)),
-        rows: ALL_ROWS.filter((r) => named.has(r.name)),
+        cards: selectCards(context, CARDS.filter((c) => named.has(c.title))),
+        rows: selectRows(context, ALL_ROWS.filter((r) => named.has(r.name))),
       };
     }
-    const context = `${turn.question} ${turn.text}`;
     return { cards: selectCards(context, CARDS), rows: selectRows(context, ALL_ROWS) };
   };
 
