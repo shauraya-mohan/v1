@@ -4,9 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ANSWERS, matchTopicInContext, type Topic } from "./content";
 
 /**
- * Replicate's Gemini SSE emits the whole answer as one event and then replays it
- * as deltas, so the server waits for the complete text and we type it out here.
- * Reveal is paced to land in roughly REVEAL_MS whatever the length.
+ * The ask route returns the full answer in one response. Reveal is paced here
+ * so it lands in roughly REVEAL_MS whatever the length.
  */
 const REVEAL_MS = 2600;
 const MIN_CPS = 34;

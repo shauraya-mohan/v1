@@ -14,11 +14,11 @@ The page prerenders to static content; the two API routes render on demand.
 
 ## The ask box
 
-Typing a question calls Gemini 2.5 Flash through Replicate, grounded in the résumé.
+Typing a question calls OpenAI's `gpt-6-luna` with reasoning off, grounded in the résumé.
 Clicking a nav item or chip does **not** — those answer instantly from curated content, which
 keeps the common paths free and fast.
 
-Setup: copy `.env.example` to `.env.local` and fill in `REPLICATE_API_TOKEN` and
+Setup: copy `.env.example` to `.env.local` and fill in `OPENAI_API_KEY` and
 `ASK_SIGNING_SECRET` (`openssl rand -hex 32`). Set both in your host's env for production.
 
 **Grounding.** `lib/knowledge.ts` holds the résumé as prose facts. The routed topic becomes a
@@ -111,18 +111,16 @@ biography to fill the gap. Personal ground truth lives in the `PERSONAL` block o
 a specific architectural question gets three paragraphs. That's in the system instruction, not
 a token cap.
 
-**Streaming.** Replicate's Gemini SSE emits the whole answer as one event and *then* replays it
-as deltas, so naively concatenating double-counts and the delta boundaries drop spaces. The
-server waits for the complete prediction instead and the client types it out (`lib/useConversation.ts`),
-paced to land in ~1.4s at any length. Escape skips to the end. Claude's loading verbs cycle
-while the request is in flight.
+**Streaming.** The server waits for the complete completion and the client types it out
+(`lib/useConversation.ts`), paced to land in about 2.6s at any length. Escape skips to the end.
+Claude's loading verbs cycle while the request is in flight.
 
-Note: `max_output_tokens` is charged for reasoning overhead even with thinking disabled, so it's
-set high (1400) purely as a runaway guard — a tight cap truncates answers mid-sentence.
+`max_completion_tokens` is 1400 purely as a runaway guard — a tight cap truncates answers
+mid-sentence. `reasoning_effort` is `none`, so that budget is not spent on hidden reasoning.
 
 ### What's actually protected
 
-The Replicate token is server-only and never reaches the bundle (there's a check below). The
+The OpenAI key is server-only and never reaches the bundle (there's a check below). The
 endpoint is guarded by an `Origin` check, a short-lived HMAC ticket bound to the caller's IP
 (`/api/session`, stateless so it survives cold starts), a 300-character input cap, and rate
 limits in `lib/ratelimit.ts`: 8/minute and 40/hour per IP, 700ms minimum gap, 800/day global as
@@ -134,7 +132,7 @@ What the above stops is the thing that actually costs you: token theft, other si
 your endpoint, and scripted spam.
 
 ```bash
-grep -r "r8_" .next/static   # must return nothing
+grep -rE "sk-|OPENAI_API_KEY" .next/static   # must return nothing
 ```
 
 The limiter is in-process, which is effectively global on a single instance. If you scale to
