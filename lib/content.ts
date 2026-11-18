@@ -208,7 +208,7 @@ export const ANSWERS: Record<Topic, Answer> = {
   about: {
     q: "Who are you?",
     lines: [
-      "AI engineer, computer science at Waterloo. On payroll at Windscribe and Control D.",
+      "AI engineer, computer science at Waterloo. Back in class for 2B, after co-op terms at Windscribe and Control D.",
       "The work is agents allowed to touch production: tools behind a confirmation gate, personas that hold up over voice and text, evaluation passes over real support traffic.",
       "Before Toronto: ITC in New Delhi and Mobifly in Gurgaon.",
     ],
@@ -262,6 +262,12 @@ export const LABEL: Record<Topic, string> = {
   resume: "Résumé",
   contact: "Contact",
 };
+
+/** True for every topic the UI actually has. Keyed off LABEL so a new topic
+ *  cannot be added there and then dropped by a second, hand-kept list. */
+export function isTopic(value: unknown): value is Topic {
+  return typeof value === "string" && Object.prototype.hasOwnProperty.call(LABEL, value);
+}
 
 /**
  * Route free-text to the topic that answers it. Scored rather than first-match:

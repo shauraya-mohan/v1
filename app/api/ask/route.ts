@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { matchTopicInContext, type Topic } from "@/lib/content";
+import { isTopic, matchTopicInContext } from "@/lib/content";
 import { SYSTEM_INSTRUCTION, buildPrompt, stripShowTag, type Turn } from "@/lib/knowledge";
 import { checkRate } from "@/lib/ratelimit";
 import { clientIp, ipHash, originOk, verifyToken } from "@/lib/security";
@@ -16,8 +16,6 @@ const MAX_QUESTION = 300;
 const DEADLINE_MS = 45_000;
 const MAX_HISTORY = 8; // last 4 exchanges
 const MAX_TURN_CHARS = 700;
-
-const TOPICS = ["about", "projects", "experience", "writing", "resume", "contact"];
 
 /**
  * History arrives from the browser, so a caller can put whatever they like in it
@@ -82,7 +80,7 @@ export async function POST(req: Request) {
   const history = cleanHistory(rawHistory);
   // The client sends the topic already on screen so a bare follow-up
   // ("tell me more about that one") stays on the same subject.
-  const previous = TOPICS.includes(rawTopic as string) ? (rawTopic as Topic) : null;
+  const previous = isTopic(rawTopic) ? rawTopic : null;
   const topic = matchTopicInContext(q, previous);
 
   const ac = new AbortController();
