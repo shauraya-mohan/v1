@@ -1,4 +1,5 @@
-import { matchTopicInContext, type Topic } from "@/lib/content";
+import OpenAI from "openai";
+import { isTopic, matchTopicInContext } from "@/lib/content";
 import { SYSTEM_INSTRUCTION, buildPrompt, stripShowTag, type Turn } from "@/lib/knowledge";
 import { checkRate } from "@/lib/ratelimit";
 import { clientIp, ipHash, originOk, verifyToken } from "@/lib/security";
@@ -6,13 +7,15 @@ import { clientIp, ipHash, originOk, verifyToken } from "@/lib/security";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = "google/gemini-2.5-flash";
+// Cheapest current general chat model, and the recommended successor to
+// gpt-4o-mini. reasoning_effort "none" matches the old Gemini call, which ran
+// with thinking disabled: temperature stays valid, and the token cap below
+// applies to the visible answer instead of hidden reasoning.
+const MODEL = "gpt-6-luna";
 const MAX_QUESTION = 300;
 const DEADLINE_MS = 45_000;
 const MAX_HISTORY = 8; // last 4 exchanges
 const MAX_TURN_CHARS = 700;
-
-const TOPICS = ["about", "projects", "experience", "writing", "resume", "contact"];
 
 /**
  * History arrives from the browser, so a caller can put whatever they like in it
@@ -51,8 +54,8 @@ const deny = (status: number, message: string, retryAfter?: number) =>
 export async function POST(req: Request) {
   if (!originOk(req)) return deny(403, "Forbidden.");
 
-  const token = process.env.REPLICATE_API_TOKEN;
-  if (!token) return deny(503, "The ask box is offline right now.");
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return deny(503, "The ask box is offline right now.");
 
   let body: unknown;
   try {
@@ -77,49 +80,32 @@ export async function POST(req: Request) {
   const history = cleanHistory(rawHistory);
   // The client sends the topic already on screen so a bare follow-up
   // ("tell me more about that one") stays on the same subject.
-  const previous = TOPICS.includes(rawTopic as string) ? (rawTopic as Topic) : null;
+  const previous = isTopic(rawTopic) ? rawTopic : null;
   const topic = matchTopicInContext(q, previous);
 
   const ac = new AbortController();
   const deadline = setTimeout(() => ac.abort(), DEADLINE_MS);
 
+  const client = new OpenAI({ apiKey, timeout: DEADLINE_MS });
+
   try {
-    const created = await fetch(`https://api.replicate.com/v1/models/${MODEL}/predictions`, {
-      method: "POST",
-      signal: ac.signal,
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-        // Block until the prediction finishes instead of polling.
-        prefer: "wait=50",
+    const completion = await client.chat.completions.create(
+      {
+        model: MODEL,
+        temperature: 0.55,
+        // Runaway guard only. A tight cap truncates mid-sentence; the system
+        // instruction is what keeps answers short.
+        max_completion_tokens: 1400,
+        reasoning_effort: "none",
+        messages: [
+          { role: "developer", content: SYSTEM_INSTRUCTION },
+          { role: "user", content: buildPrompt(topic, q, history) },
+        ],
       },
-      body: JSON.stringify({
-        input: {
-          prompt: buildPrompt(topic, q, history),
-          system_instruction: SYSTEM_INSTRUCTION,
-          temperature: 0.55,
-          // Reasoning overhead is billed against this cap even with thinking off,
-          // so a tight number truncates mid-sentence. Brevity is enforced by the
-          // system instruction instead; this is only a runaway guard.
-          max_output_tokens: 1400,
-          thinking_budget: 0,
-          dynamic_thinking: false,
-        },
-      }),
-    });
+      { signal: ac.signal },
+    );
 
-    if (!created.ok) {
-      console.error("replicate create failed", created.status, await created.text().catch(() => ""));
-      return deny(502, "Couldn't reach the model. Try again in a second.");
-    }
-
-    const pred = await created.json();
-    if (pred?.status !== "succeeded") {
-      console.error("replicate prediction not ok", pred?.status, pred?.error);
-      return deny(502, "The model didn't finish that one. Try again.");
-    }
-
-    const raw = (Array.isArray(pred.output) ? pred.output.join("") : (pred.output ?? "")).trim();
+    const raw = (completion.choices[0]?.message?.content ?? "").trim();
     if (!raw) return deny(502, "Nothing came back. Try rephrasing.");
 
     // The model reports which real things it actually gave detail about, so
@@ -140,8 +126,15 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    if ((err as Error)?.name === "AbortError") return deny(504, "That took too long. Try again.");
-    console.error("ask failed", err);
+    if (
+      err instanceof OpenAI.APIUserAbortError ||
+      err instanceof OpenAI.APIConnectionTimeoutError ||
+      (err instanceof Error && err.name === "AbortError")
+    ) {
+      return deny(504, "That took too long. Try again.");
+    }
+    const status = err instanceof OpenAI.APIError ? err.status : "";
+    console.error("openai request failed", status, err instanceof Error ? err.message : err);
     return deny(502, "Couldn't reach the model. Try again in a second.");
   } finally {
     clearTimeout(deadline);
